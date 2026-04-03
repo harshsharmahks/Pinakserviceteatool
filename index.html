@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0D1A3C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Green Park Food Corner Tea</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--navy:#0D1A3C;--gold:#C49A2A;--gold2:#E8C060;--cream:#FBF6EC;--warm:#F5EDD8;--green:#2A5A37;--red:#B03020;--grey:#7A6E5F;--card:rgba(255,255,255,0.04);--border:rgba(196,154,42,0.18);}
+body{background:var(--navy);font-family:'DM Sans',sans-serif;min-height:100vh;color:var(--cream);overflow-x:hidden}
+.hdr{background:linear-gradient(160deg,#0a1530,#0D1A3C);padding:env(safe-area-inset-top,0) 0 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.hdr-in{padding:12px 14px 10px;display:flex;align-items:center;gap:10px}
+.hdr-ico{font-size:26px;flex-shrink:0}
+.hdr-txt{flex:1;min-width:0}
+.hdr-txt h1{font-family:'Playfair Display',serif;font-size:15px;color:var(--gold2)}
+.hdr-txt .sub{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(251,246,236,0.35);margin-top:1px}
+.hdr-txt .brand{font-size:9px;color:rgba(196,154,42,0.45);margin-top:1px}
+.lng-btn{flex-shrink:0;background:rgba(196,154,42,0.12);border:1px solid var(--border);color:var(--gold2);border-radius:20px;padding:6px 12px;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500}
+.tabs{display:flex;background:rgba(0,0,0,0.2);border-bottom:1px solid var(--border)}
+.tab{flex:1;padding:10px 4px;text-align:center;font-size:11px;font-weight:500;color:rgba(251,246,236,0.4);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s}
+.tab.active{color:var(--gold2);border-bottom-color:var(--gold)}
+.panel{display:none;padding:14px 14px 100px;max-width:480px;margin:0 auto}
+.panel.active{display:block}
+/* CUP CARD */
+.cup-card{background:var(--warm);border-radius:18px;padding:16px;margin-bottom:10px;color:var(--navy)}
+.clbl{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-bottom:10px;display:block}
+.cup-row{display:flex;align-items:center;gap:10px}
+.cup-btn{width:46px;height:46px;border-radius:50%;border:2px solid var(--navy);background:var(--navy);color:var(--gold2);font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.1s;flex-shrink:0}
+.cup-btn:active{transform:scale(0.9)}
+.cup-disp{flex:1;text-align:center}
+.cup-num{font-family:'Playfair Display',serif;font-size:48px;font-weight:700;color:var(--navy);line-height:1}
+.cup-sub{font-size:11px;color:var(--grey);margin-top:1px}
+.inp-wrap{display:flex;align-items:center;gap:6px;margin-top:10px}
+.cup-inp{flex:1;padding:8px 10px;border-radius:10px;border:1.5px solid rgba(13,26,60,0.25);background:rgba(13,26,60,0.06);color:var(--navy);font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;text-align:center}
+.cup-inp:focus{outline:none;border-color:var(--navy)}
+.inp-lbl{font-size:11px;color:var(--grey);white-space:nowrap}
+.go-btn{padding:8px 14px;border-radius:10px;border:none;background:var(--navy);color:var(--gold2);font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer}
+.ynote{background:rgba(42,90,55,0.12);border:1px solid rgba(42,90,55,0.25);border-radius:10px;padding:7px 12px;margin-top:8px;font-size:11px;color:#7dcc8a;text-align:center}
+.qrow{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.qb{padding:5px 11px;border-radius:20px;border:1.5px solid rgba(13,26,60,0.2);background:transparent;color:var(--navy);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.15s;font-weight:500}
+.qb.active,.qb:active{background:var(--navy);color:var(--gold2);border-color:var(--navy)}
+/* COMMERCIAL TOGGLE */
+.tog-row{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.tog-lbl{font-size:13px;font-weight:500;color:var(--cream)}
+.tog-sub{font-size:10px;color:rgba(251,246,236,0.4);margin-top:2px}
+.tog{position:relative;width:44px;height:24px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tog-sl{position:absolute;inset:0;background:rgba(255,255,255,0.1);border-radius:24px;cursor:pointer;transition:0.3s}
+.tog-sl:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.3s}
+input:checked+.tog-sl{background:var(--green)}
+input:checked+.tog-sl:before{transform:translateX(20px)}
+.com-note{display:none;background:rgba(42,90,55,0.15);border:1px solid rgba(42,90,55,0.3);border-radius:10px;padding:7px 12px;font-size:11px;color:#7dcc8a;margin-bottom:8px;text-align:center}
+.com-note.vis{display:block}
+/* SECTION */
+.sec{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+/* INGREDIENTS */
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ic{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px}
+.ic.full{grid-column:1/-1;display:flex;align-items:center;gap:12px}
+.ic-emo{font-size:20px;flex-shrink:0}
+.ic-name{font-size:10px;color:rgba(251,246,236,0.45);margin-bottom:2px}
+.ic-val{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold2);font-weight:700;line-height:1}
+/* STEPS */
+.step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.step:last-child{border:none}
+.snum{width:28px;height:28px;background:rgba(196,154,42,0.1);border:1px solid rgba(196,154,42,0.22);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;color:var(--gold);flex-shrink:0;margin-top:2px}
+.stitle{font-size:13px;font-weight:500;color:var(--cream);margin-bottom:2px;display:flex;align-items:center;flex-wrap:wrap;gap:5px}
+.stag{font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(196,154,42,0.14);color:var(--gold2);font-weight:500}
+.stag.dyn{background:rgba(42,90,55,0.22);color:#7dcc8a}
+.sdesc{font-size:12px;color:rgba(251,246,236,0.55);line-height:1.6}
+.shi{background:rgba(196,154,42,0.07);border-left:2px solid var(--gold);border-radius:0 8px 8px 0;padding:7px 10px;margin-top:6px;font-size:11px;color:var(--gold2);line-height:1.5}
+/* STEP TIMERS */
+.stb{margin-top:8px;padding:9px 14px;border-radius:10px;border:none;background:var(--gold);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.stb:active{transform:scale(0.97)}
+.stb.run{background:var(--red);color:#fff}
+.stb.fin{background:var(--green);color:#fff}
+.stb.big{width:100%;justify-content:center;font-size:13px;padding:11px;display:flex}
+.std{display:none;margin-top:8px;background:rgba(0,0,0,0.25);border-radius:12px;padding:12px;text-align:center}
+.std.vis{display:block}
+.std.fin-s{background:rgba(42,90,55,0.15)}
+.stdig{font-family:'Playfair Display',serif;font-size:36px;color:#fff;font-weight:700;line-height:1}
+.stprog{width:100%;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;margin:8px 0 5px;overflow:hidden}
+.stbar{height:100%;background:var(--gold);border-radius:2px;width:0%;transition:width 1s linear}
+.stmsg{font-size:11px;color:rgba(255,255,255,0.45)}
+.stir{display:none;background:rgba(196,154,42,0.12);border:1px solid var(--border);border-radius:10px;padding:8px;margin-top:6px;font-size:13px;color:var(--gold2);text-align:center;font-weight:500}
+.stir.vis{display:block}
+.done-btn{margin-top:8px;display:inline-block;padding:7px 14px;border-radius:10px;background:rgba(42,90,55,0.15);border:1px solid rgba(42,90,55,0.35);color:#7dcc8a;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.done-btn.fin{background:rgba(42,90,55,0.4);color:#fff}
+/* COST */
+.ccard{background:linear-gradient(135deg,rgba(196,154,42,0.09),rgba(196,154,42,0.03));border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px}
+.crow:last-child{border:none}
+.crow.tot{padding-top:12px;font-weight:500;font-size:14px}
+.ck{color:rgba(251,246,236,0.55)}
+.cv{color:var(--gold2);font-family:'Playfair Display',serif;font-size:15px}
+.cv.big{font-size:26px;color:#fff}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
+.pp{background:rgba(255,255,255,0.04);border-radius:10px;padding:10px 6px;text-align:center}
+.pp-p{font-size:15px;font-weight:500;color:var(--gold2)}
+.pp-m{font-size:9px;color:rgba(255,255,255,0.32);margin-top:2px}
+.pp-e{font-size:10px;color:#7dcc8a;margin-top:3px}
+.pp.best{border:1px solid rgba(125,204,138,0.35);background:rgba(42,90,55,0.14)}
+.pp.best .pp-p{color:#7dcc8a}
+.mode-row{display:flex;gap:6px;margin-bottom:10px}
+.mode-btn{flex:1;padding:8px 10px;border-radius:10px;border:1.5px solid rgba(13,26,60,0.2);background:transparent;color:var(--grey);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;transition:all 0.15s}
+.mode-btn.active{background:var(--navy);color:var(--gold2);border-color:var(--navy)}
+.sug-box{background:var(--warm);border-radius:10px;overflow:hidden;margin-top:4px;display:none}
+.sug-box.vis{display:block}
+.sug-item{padding:9px 12px;font-size:13px;color:var(--navy);cursor:pointer;border-bottom:1px solid rgba(13,26,60,0.08);display:flex;justify-content:space-between;align-items:center}
+.sug-item:last-child{border:none}
+.sug-item:active{background:rgba(13,26,60,0.08)}
+.sug-right{font-size:11px;color:var(--grey)}
+/* TIPS */
+.tips{background:rgba(42,90,55,0.1);border:1px solid rgba(42,90,55,0.22);border-radius:14px;padding:14px}
+.tip{display:flex;gap:8px;padding:5px 0;font-size:12px;color:rgba(251,246,236,0.58);line-height:1.5}
+.tip-dot{color:#7dcc8a;flex-shrink:0}
+/* SHARE / ABOUT */
+.scard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px}
+.scard h3{font-family:'Playfair Display',serif;font-size:15px;color:var(--gold2);margin-bottom:5px}
+.scard p{font-size:12px;color:rgba(251,246,236,0.55);line-height:1.6;margin-bottom:12px}
+.sacts{display:flex;flex-direction:column;gap:7px}
+.sa{padding:13px 14px;border-radius:12px;border:1px solid transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:9px;transition:all 0.15s;width:100%}
+.sa:active{transform:scale(0.98)}
+.sa-g{background:var(--gold);color:var(--navy)}.sa-s{background:rgba(255,255,255,0.05);color:var(--cream);border-color:var(--border)}.sa-wa{background:#25D366;color:#fff}
+.urlbox{background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:11px;color:var(--gold);font-family:monospace;word-break:break-all;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.copybtn{background:var(--gold);color:var(--navy);border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;flex-shrink:0}
+.itip{background:rgba(196,154,42,0.07);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.itip h4{color:var(--gold2);font-size:12px;margin-bottom:7px}
+.itip ol{padding-left:16px}
+.itip li{font-size:11px;color:rgba(251,246,236,0.55);line-height:1.8}
+.ahero{background:linear-gradient(135deg,#162040,#1a2a4a);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:10px;text-align:center}
+.ahero .emo{font-size:44px;display:block;margin-bottom:10px}
+.ahero h2{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold2);margin-bottom:5px}
+.ahero p{font-size:12px;color:rgba(251,246,236,0.55);line-height:1.7}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.fact{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+.fnum{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold2);font-weight:700}
+.flbl{font-size:10px;color:rgba(251,246,236,0.4);margin-top:3px}
+.story{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.story h3{font-family:'Playfair Display',serif;font-size:14px;color:var(--gold2);margin-bottom:7px}
+.story p{font-size:12px;color:rgba(251,246,236,0.55);line-height:1.75;margin-bottom:7px}
+.story p:last-child{margin:0}
+.cred{background:rgba(196,154,42,0.05);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;text-align:center}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,16,36,0.97);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0);backdrop-filter:blur(10px);z-index:100}
+.ni{flex:1;padding:10px 4px;text-align:center;cursor:pointer;color:rgba(251,246,236,0.32);transition:color 0.2s}
+.ni.active{color:var(--gold2)}
+.ni .nico{font-size:19px;display:block;margin-bottom:2px}
+.ni .nlbl{font-size:9px}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-ico">☕</div>
+    <div class="hdr-txt">
+      <h1>Green Park Food Corner Tea</h1>
+      <div class="sub">Special Doodh Chai Calculator</div>
+      <div class="brand">By Pinak Services LLP &amp; The Urban Events</div>
+    </div>
+    <button class="lng-btn" id="lngBtn" onclick="toggleLang()">हिंदी</button>
+  </div>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="goTab('recipe')" id="tb_recipe">Recipe</div>
+  <div class="tab" onclick="goTab('cost')" id="tb_cost">Cost</div>
+  <div class="tab" onclick="goTab('share')" id="tb_share">Share</div>
+  <div class="tab" onclick="goTab('about')" id="tb_about">About</div>
+</div>
+
+<!-- RECIPE -->
+<div class="panel active" id="p_recipe">
+
+  <div class="cup-card">
+
+    <!-- Mode tabs inside card -->
+    <div class="mode-row">
+      <button class="mode-btn active" id="modeGlass" onclick="setMode('glass')">🥛 By Glasses</button>
+      <button class="mode-btn" id="modeMilk" onclick="setMode('milk')">🍼 By Milk (Litres)</button>
+    </div>
+
+    <!-- GLASS MODE -->
+    <div id="glassSection">
+      <span class="clbl" style="margin-top:10px">How many glasses? (80ml served per glass)</span>
+      <div class="cup-row">
+        <button class="cup-btn" onclick="chg(-1)">−</button>
+        <div class="cup-disp">
+          <div class="cup-num" id="cupN">1</div>
+          <div class="cup-sub">glasses</div>
+        </div>
+        <button class="cup-btn" onclick="chg(1)">+</button>
+      </div>
+      <div class="inp-wrap" style="margin-top:8px">
+        <span class="inp-lbl">Glasses:</span>
+        <input class="cup-inp" type="number" id="glassInp" min="1" max="999" placeholder="e.g. 75"
+          oninput="showGlassSug(this.value)"
+          onkeydown="if(event.key==='Enter'){applyGlass();}"
+          onblur="hideGlassSug()">
+        <button class="go-btn" onclick="applyGlass()">Go</button>
+      </div>
+      <div class="sug-box" id="glassSug"></div>
+      <div class="qrow">
+        <button class="qb active" onclick="setC(1,this)">1</button>
+        <button class="qb" onclick="setC(2,this)">2</button>
+        <button class="qb" onclick="setC(5,this)">5</button>
+        <button class="qb" onclick="setC(10,this)">10</button>
+        <button class="qb" onclick="setC(25,this)">25</button>
+        <button class="qb" onclick="setC(50,this)">50</button>
+        <button class="qb" onclick="setC(100,this)">100</button>
+        <button class="qb" onclick="setC(200,this)">200</button>
+      </div>
+    </div>
+
+    <!-- MILK MODE -->
+    <div id="milkSection" style="display:none">
+      <span class="clbl" style="margin-top:10px">How much milk? (multiples of ½ litre)</span>
+      <div class="cup-row">
+        <button class="cup-btn" onclick="chgMilk(-500)">−</button>
+        <div class="cup-disp">
+          <div class="cup-num" id="milkN">0.5 L</div>
+          <div class="cup-sub" id="milkSub">~3 glasses</div>
+        </div>
+        <button class="cup-btn" onclick="chgMilk(500)">+</button>
+      </div>
+      <div class="inp-wrap" style="margin-top:8px">
+        <span class="inp-lbl">Litres:</span>
+        <input class="cup-inp" type="number" id="milkInp" min="0.5" step="0.5" placeholder="e.g. 2.5"
+          oninput="showMilkSug(this.value)"
+          onkeydown="if(event.key==='Enter'){applyMilk();}"
+          onblur="hideMilkSug()">
+        <button class="go-btn" onclick="applyMilk()">Go</button>
+      </div>
+      <div class="sug-box" id="milkSug"></div>
+      <div class="qrow">
+        <button class="qb" onclick="setMilk(500,this)">½ L</button>
+        <button class="qb" onclick="setMilk(1000,this)">1 L</button>
+        <button class="qb" onclick="setMilk(1500,this)">1½ L</button>
+        <button class="qb" onclick="setMilk(2000,this)">2 L</button>
+        <button class="qb" onclick="setMilk(3000,this)">3 L</button>
+        <button class="qb" onclick="setMilk(5000,this)">5 L</button>
+        <button class="qb" onclick="setMilk(10000,this)">10 L</button>
+        <button class="qb" onclick="setMilk(20000,this)">20 L</button>
+      </div>
+    </div>
+
+    <div class="ynote" id="yBanner">160ml milk → ~1 glass (80ml served)</div>
+  </div>
+
+  <div class="tog-row">
+    <div>
+      <div class="tog-lbl" id="lComm">🔥 Commercial Burner</div>
+      <div class="tog-sub" id="lCommSub">High-power gas — reduces time ~25%</div>
+    </div>
+    <label class="tog">
+      <input type="checkbox" id="commToggle" onchange="toggleComm()">
+      <span class="tog-sl"></span>
+    </label>
+  </div>
+  <div class="com-note" id="comNote">⚡ Commercial times applied — stir every 20 sec</div>
+
+  <div class="sec" id="lIng">Ingredients</div>
+  <div class="igrid">
+    <div class="ic full"><div class="ic-emo">🥛</div><div>
+      <div class="ic-name" id="iMilkL">Full-fat Milk (Amul) — 2× glasses</div>
+      <div class="ic-val" id="vMilk">160 ml</div>
+    </div></div>
+    <div class="ic"><div class="ic-emo">💧</div>
+      <div class="ic-name" id="iWaterL">Water</div><div class="ic-val" id="vWater">40 ml</div>
+    </div>
+    <div class="ic"><div class="ic-emo">🍂</div>
+      <div class="ic-name" id="iTeaL">Wagh Bakri CTC Tea</div><div class="ic-val" id="vTea">1 tsp (2g)</div>
+    </div>
+    <div class="ic"><div class="ic-emo">🌿</div>
+      <div class="ic-name" id="iElL">Elaichi (pods)</div><div class="ic-val" id="vEl">2 pods</div>
+    </div>
+    <div class="ic"><div class="ic-emo">🫚</div>
+      <div class="ic-name" id="iGinL">Fresh Ginger</div><div class="ic-val" id="vGin">6 g</div>
+    </div>
+    <div class="ic full"><div class="ic-emo">🍬</div><div>
+      <div class="ic-name" id="iSugL">Sugar</div><div class="ic-val" id="vSug">1 tbsp</div>
+    </div></div>
+  </div>
+
+  <div class="sec" id="lMethod">Method — Tap ▶ to start each step</div>
+
+  <!-- Step 1 -->
+  <div class="step"><div class="snum">1</div><div style="flex:1">
+    <div class="stitle" id="s1T">Crush Spices</div>
+    <div class="sdesc" id="s1D">Lightly crack elaichi pods — just open, don't powder. Roughly crush ginger. Same prep regardless of quantity.</div>
+    <button class="done-btn" id="db1" onclick="markDone(1)">✓ Done</button>
+  </div></div>
+
+  <!-- Step 2 — 2 min fixed -->
+  <div class="step"><div class="snum">2</div><div style="flex:1">
+    <div class="stitle">Boil Water + Spices <span class="stag" id="s2tag">2 min</span></div>
+    <div class="sdesc" id="s2D">Bring water to boil. Add spices. HIGH flame 2 minutes — spices bloom fully.</div>
+    <button class="stb" id="stb2" onclick="runStep(2,120,'Boiling spices on HIGH...')">▶ 2:00</button>
+    <div class="std" id="std2"><div class="stdig" id="std2dig">02:00</div><div class="stprog"><div class="stbar" id="std2bar"></div></div><div class="stmsg" id="std2msg">Boiling spices on HIGH...</div></div>
+  </div></div>
+
+  <!-- Step 3 — 1 min fixed -->
+  <div class="step"><div class="snum">3</div><div style="flex:1">
+    <div class="stitle">Add Tea Leaves <span class="stag" id="s3tag">1 min</span></div>
+    <div class="sdesc" id="s3D">Add tea leaves. Boil hard on HIGH 1 full minute. Must turn very dark — this is where colour, aroma and taste comes from. Don't reduce this time.</div>
+    <button class="stb" id="stb3" onclick="runStep(3,60,'Full boil — deep colour forming!')">▶ 1:00</button>
+    <div class="std" id="std3"><div class="stdig" id="std3dig">01:00</div><div class="stprog"><div class="stbar" id="std3bar"></div></div><div class="stmsg" id="std3msg">Full boil — deep colour forming!</div></div>
+  </div></div>
+
+  <!-- Step 4 — ~3 min -->
+  <div class="step"><div class="snum">4</div><div style="flex:1">
+    <div class="stitle">Add Milk — HIGH Flame <span class="stag" id="s4tag">~3 min</span></div>
+    <div class="sdesc" id="s4D">Pour all milk at once. KEEP HIGH flame. Stir continuously until full rolling boil.</div>
+    <button class="stb" id="stb4" onclick="runStep(4,180,'Bring to full boil — keep stirring!')">▶ 3:00</button>
+    <div class="std" id="std4"><div class="stdig" id="std4dig">03:00</div><div class="stprog"><div class="stbar" id="std4bar"></div></div><div class="stmsg" id="std4msg">Bring to full boil — keep stirring!</div></div>
+  </div></div>
+
+  <!-- Step 5 — DYNAMIC -->
+  <div class="step"><div class="snum">5</div><div style="flex:1">
+    <div class="stitle">Reduce &amp; Condense <span class="stag dyn" id="sTag">6–8 min</span></div>
+    <div class="sdesc" id="s5D">Lower to MEDIUM heat. Stir every 30 sec. Milk reduces to half — thick and creamy. This is the key step.</div>
+    <div class="shi" id="sNote">For 1 glass → 6–8 min on medium heat</div>
+    <button class="stb big" id="stb5" onclick="runStep5()">▶ Start Reduction Timer — 6–8 min</button>
+    <div class="std" id="std5">
+      <div class="stdig" id="std5dig">08:00</div>
+      <div class="stprog"><div class="stbar" id="std5bar"></div></div>
+      <div class="stmsg" id="std5msg">Stir every 30 seconds!</div>
+      <div class="stir" id="stirEl">🥄 Stir now!</div>
+    </div>
+  </div></div>
+
+  <!-- Step 6 — 1 min -->
+  <div class="step"><div class="snum">6</div><div style="flex:1">
+    <div class="stitle">Add Sugar <span class="stag" id="s6tag">1 min</span></div>
+    <div class="sdesc" id="s6D">Add sugar. Stir well. One final boil. Taste and adjust sweetness.</div>
+    <button class="stb" id="stb6" onclick="runStep(6,60,'Final boil with sugar...')">▶ 1:00</button>
+    <div class="std" id="std6"><div class="stdig" id="std6dig">01:00</div><div class="stprog"><div class="stbar" id="std6bar"></div></div><div class="stmsg" id="std6msg">Final boil with sugar...</div></div>
+  </div></div>
+
+  <!-- Step 7 -->
+  <div class="step"><div class="snum">7</div><div style="flex:1">
+    <div class="stitle" id="s7T">Strain &amp; Serve</div>
+    <div class="sdesc" id="s7D">Strain through fine mesh. Fill 100ml glass to 80ml. Serve piping hot immediately.</div>
+    <div class="shi" id="yNote">Yield: ~80ml per glass · Total: ~80ml</div>
+    <button class="done-btn" id="db7" onclick="markDone(7)">✓ Served!</button>
+  </div></div>
+
+  <!-- Cost on Recipe Tab -->
+  <div class="sec" id="lCostR">Cost &amp; Profit</div>
+  <div class="ccard">
+    <div class="crow"><span class="ck">🥛 Milk — <span id="milkQR">160ml</span> (₹67/L)</span><span class="cv" id="cMilk">—</span></div>
+    <div class="crow"><span class="ck">🍂 Wagh Bakri (₹522/kg)</span><span class="cv" id="cTea">—</span></div>
+    <div class="crow"><span class="ck">🌿 Elaichi (₹2,500/kg)</span><span class="cv" id="cEl">—</span></div>
+    <div class="crow"><span class="ck">🫚 Ginger (₹100/kg)</span><span class="cv" id="cGin">—</span></div>
+    <div class="crow"><span class="ck">🍬 Sugar (₹60/kg)</span><span class="cv" id="cSug">—</span></div>
+    <div class="crow tot"><span class="ck" id="lTotal">Total cost</span><span class="cv big" id="cTot">—</span></div>
+    <div class="crow"><span class="ck" id="lPerG">Per glass cost</span><span class="cv" id="cPerG">—</span></div>
+    <div style="margin-top:12px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:8px">Sell price options</div>
+    <div class="pgrid" id="pgridR"></div>
+  </div>
+
+  <div class="sec" id="lTips">Tips</div>
+  <div class="tips">
+    <div class="tip"><span class="tip-dot">●</span><span id="t1">Yield: 160ml milk → ~80ml chai served. 100ml glass filled at 80ml is authentic.</span></div>
+    <div class="tip"><span class="tip-dot">●</span><span id="t2">Use narrowest pot — wide pan loses steam and over-reduces fast.</span></div>
+    <div class="tip"><span class="tip-dot">●</span><span id="t3">Spoon test — chai should coat the back. Watery = 2–3 more min.</span></div>
+    <div class="tip"><span class="tip-dot">●</span><span id="t4">Full 1 min on HIGH for tea leaves — colour, aroma and taste all come from here.</span></div>
+    <div class="tip"><span class="tip-dot">●</span><span id="t5">Toggle Commercial Burner ON → all step times auto-reduce 25%.</span></div>
+  </div>
+
+</div>
+
+<!-- COST TAB -->
+<div class="panel" id="p_cost">
+  <div style="text-align:center;padding:6px 0 12px">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--grey)">Calculating for</div>
+    <div style="font-family:'Playfair Display',serif;font-size:40px;color:var(--gold2)" id="cCups">1</div>
+    <div style="font-size:12px;color:rgba(251,246,236,0.45)">glass × 80ml</div>
+    <div class="qrow" style="justify-content:center;margin-top:10px">
+      <button class="qb active" onclick="setC(1,this)">1</button>
+      <button class="qb" onclick="setC(5,this)">5</button>
+      <button class="qb" onclick="setC(10,this)">10</button>
+      <button class="qb" onclick="setC(50,this)">50</button>
+      <button class="qb" onclick="setC(100,this)">100</button>
+      <button class="qb" onclick="setC(200,this)">200</button>
+    </div>
+  </div>
+  <div class="ccard">
+    <div class="crow"><span class="ck">🥛 Milk — <span id="milkQC">160ml</span> (₹67/L)</span><span class="cv" id="cMilk2">—</span></div>
+    <div class="crow"><span class="ck">🍂 Wagh Bakri (₹522/kg)</span><span class="cv" id="cTea2">—</span></div>
+    <div class="crow"><span class="ck">🌿 Elaichi (₹2,500/kg)</span><span class="cv" id="cEl2">—</span></div>
+    <div class="crow"><span class="ck">🫚 Ginger (₹100/kg)</span><span class="cv" id="cGin2">—</span></div>
+    <div class="crow"><span class="ck">🍬 Sugar (₹60/kg)</span><span class="cv" id="cSug2">—</span></div>
+    <div class="crow tot"><span class="ck">Total cost</span><span class="cv big" id="cTot2">—</span></div>
+    <div class="crow"><span class="ck">Per glass cost</span><span class="cv" id="cPerG2">—</span></div>
+  </div>
+  <div class="sec">Selling Price Options</div>
+  <div class="pgrid" id="pgrid"></div>
+  <div class="sec" style="margin-top:18px">Daily Profit (200 glasses/day)</div>
+  <div class="ccard">
+    <div class="crow"><span class="ck">₹30 × 200</span><span class="cv" style="color:#7dcc8a" id="d30">—</span></div>
+    <div class="crow"><span class="ck">₹35 × 200</span><span class="cv" style="color:#7dcc8a" id="d35">—</span></div>
+    <div class="crow"><span class="ck">₹40 × 200</span><span class="cv" style="color:#7dcc8a" id="d40">—</span></div>
+    <div class="crow"><span class="ck">Monthly (₹35×200×30)</span><span class="cv" style="color:#7dcc8a" id="dMon">—</span></div>
+  </div>
+</div>
+
+<!-- SHARE TAB -->
+<div class="panel" id="p_share">
+  <div class="scard">
+    <h3>🔗 Share This Tool</h3>
+    <p>Anyone can open on any phone — no app download, no login. Just a link.</p>
+    <div class="sacts">
+      <button class="sa sa-wa" onclick="shareWA()">💬 Share on WhatsApp</button>
+      <button class="sa sa-g" onclick="shareNative()">📤 Share via...</button>
+      <button class="sa sa-s" onclick="copyLink()">📋 Copy Link</button>
+    </div>
+    <div class="urlbox"><span id="urlTxt">https://purple-cherri-67.tiiny.site</span><button class="copybtn" onclick="copyLink()" id="cpBtn">Copy</button></div>
+  </div>
+  <div class="itip">
+    <h4>📱 Save to Home Screen — Works Like an App</h4>
+    <ol>
+      <li><strong>iPhone:</strong> Safari → Share → "Add to Home Screen"</li>
+      <li><strong>Android:</strong> Chrome → ⋮ → "Add to Home Screen"</li>
+    </ol>
+  </div>
+  <div class="scard">
+    <h3>📲 Send Recipe to Kitchen</h3>
+    <p>Sends current scaled recipe as WhatsApp message — ready to cook.</p>
+    <div class="sacts"><button class="sa sa-wa" onclick="shareRecipeWA()">💬 Send Kitchen Recipe</button></div>
+  </div>
+</div>
+
+<!-- ABOUT TAB -->
+<div class="panel" id="p_about">
+  <div class="ahero">
+    <span class="emo">☕</span>
+    <h2>Green Park Special Doodh Chai</h2>
+    <p>Thick, rich, condensed milk tea — fresh every batch. So creamy it coats the glass. Served at 80ml in a 100ml glass — authentic presentation.</p>
+  </div>
+  <div class="fgrid">
+    <div class="fact"><div class="fnum">2:1</div><div class="flbl">Milk to chai ratio</div></div>
+    <div class="fact"><div class="fnum">80ml</div><div class="flbl">Served per glass</div></div>
+    <div class="fact"><div class="fnum">~₹11</div><div class="flbl">Cost per glass</div></div>
+    <div class="fact"><div class="fnum">25%</div><div class="flbl">Time saved — commercial</div></div>
+  </div>
+  <div class="story">
+    <h3>What Makes It Special</h3>
+    <p>Regular chai = lots of water, milk added late. Green Park Doodh Chai = almost pure milk, slow reduced to half, thick and creamy.</p>
+    <p>Full 1 minute boil of tea on HIGH flame gives the deep colour, strong aroma and bold taste. Never skip or reduce this step.</p>
+  </div>
+  <div class="story">
+    <h3>The Yield Rule</h3>
+    <p>160ml milk → ~80ml chai in the glass. Always use 2× milk vs. quantity to serve. A 100ml glass served at 80ml is the authentic Indian style — room for steam, no spill.</p>
+  </div>
+  <div class="cred">
+    <div style="font-size:26px;margin-bottom:8px">🌸</div>
+    <div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--gold2);margin-bottom:3px">Green Park Food Corner</div>
+    <div style="font-size:10px;color:rgba(251,246,236,0.3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Fast Food &amp; QSR · Jaipur</div>
+    <div style="font-size:10px;color:rgba(251,246,236,0.22)">Tool designed &amp; developed by</div>
+    <div style="font-size:11px;color:rgba(196,154,42,0.4);margin-top:3px">Pinak Services LLP &amp; The Urban Events</div>
+    <div style="font-size:9px;color:rgba(196,154,42,0.25);margin-top:3px">Crafting Experiences &amp; Creating Impact</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="bnav">
+  <div class="ni active" onclick="goTab('recipe')" id="n_recipe"><span class="nico">📋</span><div class="nlbl">Recipe</div></div>
+  <div class="ni" onclick="goTab('cost')" id="n_cost"><span class="nico">💰</span><div class="nlbl">Cost</div></div>
+  <div class="ni" onclick="goTab('share')" id="n_share"><span class="nico">🔗</span><div class="nlbl">Share</div></div>
+  <div class="ni" onclick="goTab('about')" id="n_about"><span class="nico">ℹ️</span><div class="nlbl">About</div></div>
+</div>
+
+<script>
+var cups=1, commercial=false, isH=false, cupMode='glass', milkMl=500;
+var URL_='https://purple-cherri-67.tiiny.site';
+var PC={milk:160,water:40,teaG:2,elaichi:2,ginG:6,sugG:10};
+var RATES={milk:0.067,tea:0.522,el:2.5,gin:0.1,sug:0.06};
+
+function milkToGlass(m){return Math.max(1,Math.round(m/PC.milk));}
+function glassToMilk(g){return g*PC.milk;}
+function fmtL(ml_){
+  if(ml_%1000===0)return (ml_/1000)+' L';
+  if(ml_%500===0)return (ml_/1000).toFixed(1)+' L';
+  if(ml_>=1000)return (ml_/1000).toFixed(2)+' L';
+  return ml_+' ml';
+}
+function getRT(c){
+  var lo=6+Math.ceil((c-1)*1.5),hi=lo+2;
+  if(commercial){lo=Math.round(lo*0.75);hi=Math.round(hi*0.75);}
+  return{lo:lo,hi:hi,txt:lo+'–'+hi+' min'};
+}
+function ml(v){return v>=1000?(v/1000).toFixed(v%1000===0?0:1)+' L':v+' ml';}
+function fmtTea(g){
+  if(g<3)return (g/3).toFixed(1)+' tsp ('+g.toFixed(1)+'g)';
+  if(g<30)return Math.round(g/3)+' tsp ('+Math.round(g)+'g)';
+  if(g<100)return (g/3).toFixed(0)+' tsp / '+Math.round(g)+'g';
+  if(g<1000)return Math.round(g)+'g';
+  return (g/1000).toFixed(2)+'kg';
+}
+function fmtSug(g){if(g<=10)return '1 tbsp';if(g<100)return Math.round(g/12)+' tbsp';if(g<1000)return Math.round(g)+'g';return (g/1000).toFixed(1)+'kg';}
+function fmtGin(g){if(g<1000)return Math.round(g)+'g';return (g/1000).toFixed(2)+'kg';}
+
+// ── MODE ──
+function setMode(mode){
+  cupMode=mode;
+  document.getElementById('modeGlass').classList.toggle('active',mode==='glass');
+  document.getElementById('modeMilk').classList.toggle('active',mode==='milk');
+  document.getElementById('glassSection').style.display=mode==='glass'?'block':'none';
+  document.getElementById('milkSection').style.display=mode==='milk'?'block':'none';
+  if(mode==='milk'){milkMl=Math.max(500,Math.round(glassToMilk(cups)/500)*500);cups=milkToGlass(milkMl);updMilkDisp();}
+  resetAll();upd();
+}
+function updMilkDisp(){
+  var g=milkToGlass(milkMl);
+  document.getElementById('milkN').textContent=fmtL(milkMl);
+  document.getElementById('milkSub').textContent='≈ '+g+' glass'+(g>1?'es':'');
+}
+
+// ── GLASS MODE ──
+function chg(d){var n=cups+d;if(n<1||n>999)return;cups=n;resetAll();updQS();upd();}
+function setC(n,btn){
+  cups=n;resetAll();
+  document.querySelectorAll('#glassSection .qb').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');upd();
+}
+function updQS(){
+  var vals=[1,2,5,10,25,50,100,200];
+  document.querySelectorAll('#glassSection .qb').forEach(function(b,i){if(vals[i]!==undefined)b.classList.toggle('active',vals[i]===cups);});
+}
+function showGlassSug(val){
+  var box=document.getElementById('glassSug');
+  var v=parseInt(val);
+  if(!val||isNaN(v)||v<1){box.classList.remove('vis');return;}
+  var sugs=[];
+  [v,Math.round(v/5)*5,Math.round(v/10)*10,Math.round(v/25)*25,Math.round(v/50)*50].forEach(function(n){if(n>=1&&n<=999&&sugs.indexOf(n)===-1)sugs.push(n);});
+  sugs.sort(function(a,b){return a-b;});
+  box.innerHTML=sugs.slice(0,4).map(function(n){
+    return '<div class="sug-item" onmousedown="pickGlass('+n+')"><span>'+n+' glasses</span><span class="sug-right">'+fmtL(glassToMilk(n))+' milk · ~'+fmtL(n*80)+' chai</span></div>';
+  }).join('');
+  box.classList.add('vis');
+}
+function hideGlassSug(){setTimeout(function(){document.getElementById('glassSug').classList.remove('vis');},200);}
+function pickGlass(n){cups=n;resetAll();updQS();upd();document.getElementById('glassInp').value='';document.getElementById('glassSug').classList.remove('vis');}
+function applyGlass(){var v=parseInt(document.getElementById('glassInp').value);if(!isNaN(v)&&v>=1)pickGlass(Math.min(v,999));}
+
+// ── MILK MODE ──
+function chgMilk(d){milkMl=Math.max(500,milkMl+d);cups=milkToGlass(milkMl);updMilkDisp();resetAll();document.querySelectorAll('#milkSection .qb').forEach(function(b){b.classList.remove('active');});upd();}
+function setMilk(ml_,btn){milkMl=ml_;cups=milkToGlass(ml_);updMilkDisp();resetAll();document.querySelectorAll('#milkSection .qb').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');upd();}
+function showMilkSug(val){
+  var box=document.getElementById('milkSug');
+  var v=parseFloat(val);
+  if(!val||isNaN(v)||v<=0){box.classList.remove('vis');return;}
+  var base=Math.round(v*2)/2;
+  var opts=[];
+  [-1,-0.5,0,0.5,1,1.5,2].forEach(function(d){var n=+(base+d).toFixed(1);if(n>=0.5&&n<=50&&opts.indexOf(n)===-1)opts.push(n);});
+  opts.sort(function(a,b){return a-b;});
+  // Label helper
+  function lbl(n){
+    var map={0.5:'½ L',1:'1 L',1.5:'1½ L',2:'2 L',2.5:'2½ L',3:'3 L',3.5:'3½ L',4:'4 L',4.5:'4½ L',5:'5 L'};
+    return map[n]||(n+' L');
+  }
+  box.innerHTML=opts.slice(0,5).map(function(n){
+    var ml_=Math.round(n*1000),g=milkToGlass(ml_);
+    return '<div class="sug-item" onmousedown="pickMilk('+ml_+')"><span>'+lbl(n)+'</span><span class="sug-right">≈ '+g+' glass'+(g!==1?'es':'')+' · ~'+fmtL(g*80)+' chai</span></div>';
+  }).join('');
+  box.classList.add('vis');
+}
+function hideMilkSug(){setTimeout(function(){document.getElementById('milkSug').classList.remove('vis');},200);}
+function pickMilk(ml_){setMilk(ml_,null);document.getElementById('milkInp').value='';document.getElementById('milkSug').classList.remove('vis');}
+function applyMilk(){
+  var v=parseFloat(document.getElementById('milkInp').value);
+  if(isNaN(v)||v<=0)return;
+  var rounded=Math.max(0.5,Math.round(v*2)/2);
+  pickMilk(Math.round(rounded*1000));
+}
+
+function s(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
+
+function upd(){
+  var c=cups;
+  if(cupMode==='milk'){
+    s('milkN',fmtL(milkMl));
+    s('milkSub','≈ '+c+' glass'+(c>1?'es':''));
+  } else {
+    s('cupN',c);
+  }
+  var milk=PC.milk*c,water=PC.water*c,teaG=PC.teaG*c;
+  var elP=PC.elaichi*c,ginG=PC.ginG*c,sugG=PC.sugG*c;
+  s('vMilk',ml(milk));s('vWater',ml(water));s('vTea',fmtTea(teaG));
+  s('vEl',elP+' pods');s('vGin',fmtGin(ginG));s('vSug',fmtSug(sugG));
+  s('yBanner',ml(milk)+' milk → ≈ '+c+' glass'+(c>1?'es':'')+' × 80ml = ~'+ml(c*80)+' chai');
+  var rt=getRT(c);
+  var stag=document.getElementById('sTag');if(stag)stag.textContent=rt.txt;
+  s('sNote','For '+c+' glass'+(c>1?'es':'')+' → '+rt.txt+(commercial?' (commercial burner)':' on medium heat'));
+  s('yNote','Yield: ~'+ml(c*80)+' total · '+c+' × 80ml glass'+(c>1?'es':''));
+  var b5=document.getElementById('stb5');if(b5&&!ST[5].running)b5.textContent='▶ Start Reduction Timer — '+rt.txt;
+  var d5=document.getElementById('std5dig');if(d5&&!ST[5].running)d5.textContent=String(rt.hi).padStart(2,'0')+':00';
+  var cM=milk*RATES.milk,cT=teaG*RATES.tea,cE=elP*0.6*RATES.el;
+  var cG=ginG*RATES.gin,cS=sugG*RATES.sug,tot=cM+cT+cE+cG+cS,pc=tot/c;
+  ['cMilk','cMilk2'].forEach(function(id){s(id,'₹'+cM.toFixed(2));});
+  ['cTea','cTea2'].forEach(function(id){s(id,'₹'+cT.toFixed(2));});
+  ['cEl','cEl2'].forEach(function(id){s(id,'₹'+cE.toFixed(2));});
+  ['cGin','cGin2'].forEach(function(id){s(id,'₹'+cG.toFixed(2));});
+  ['cSug','cSug2'].forEach(function(id){s(id,'₹'+cS.toFixed(2));});
+  ['cTot','cTot2'].forEach(function(id){s(id,'₹'+tot.toFixed(2));});
+  ['cPerG','cPerG2'].forEach(function(id){s(id,'₹'+pc.toFixed(2)+' per glass');});
+  s('cCups',c);s('milkQR',ml(milk));s('milkQC',ml(milk));
+  var prices=[25,30,35,40,45,50,60,70];
+  var bIdx=prices.findIndex(function(p){return(p-pc)/p*100>=50;});
+  var pillH=prices.slice(0,6).map(function(p,i){var pr=p-pc,mg=((pr/p)*100).toFixed(0),best=i===bIdx;return '<div class="pp'+(best?' best':'')+'"><div class="pp-p">₹'+p+'</div><div class="pp-m">'+mg+'% margin</div><div class="pp-e">+₹'+pr.toFixed(1)+'/glass</div></div>';}).join('');
+  var pg=document.getElementById('pgrid');if(pg)pg.innerHTML=pillH;
+  var pgR=document.getElementById('pgridR');if(pgR)pgR.innerHTML=pillH;
+  var pc200=(PC.milk*200*RATES.milk+PC.teaG*200*RATES.tea+PC.elaichi*200*0.6*RATES.el+PC.ginG*200*RATES.gin+PC.sugG*200*RATES.sug)/200;
+  s('d30','₹'+((30-pc200)*200).toFixed(0)+'/day');
+  s('d35','₹'+((35-pc200)*200).toFixed(0)+'/day');
+  s('d40','₹'+((40-pc200)*200).toFixed(0)+'/day');
+  s('dMon','₹'+(((35-pc200)*200*30)/1000).toFixed(1)+'k/month');
+}
+function toggleComm(){commercial=document.getElementById('commToggle').checked;document.getElementById('comNote').classList.toggle('vis',commercial);resetAll();upd();}
+
+// STEP TIMERS
+var ST={2:{},3:{},4:{},5:{},6:{}};
+
+function runStep(step,secs,stepMsg){
+  var btn=document.getElementById('stb'+step);
+  var disp=document.getElementById('std'+step);
+  var dig=document.getElementById('std'+step+'dig');
+  var bar=document.getElementById('std'+step+'bar');
+  var msg=document.getElementById('std'+step+'msg');
+  if(ST[step].running){
+    clearInterval(ST[step].int);ST[step].running=false;
+    btn.classList.remove('run');
+    var mm=secs;btn.textContent='▶ '+String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0');
+    return;
+  }
+  var total=secs,rem=total;
+  disp.classList.add('vis');disp.classList.remove('fin-s');
+  btn.classList.add('run');btn.classList.remove('fin');
+  ST[step].running=true;
+  ST[step].int=setInterval(function(){
+    rem--;
+    if(rem<=0){
+      clearInterval(ST[step].int);ST[step].running=false;
+      dig.textContent='DONE!';bar.style.width='100%';
+      msg.textContent='✅ Step done — move to next!';
+      btn.textContent='✅ Done';btn.classList.add('fin');btn.classList.remove('run');
+      disp.classList.add('fin-s');
+      if(navigator.vibrate)navigator.vibrate([300,100,300]);
+      showToast('Step '+step+' done ✅');return;
+    }
+    var m=Math.floor(rem/60),s=rem%60;
+    dig.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    bar.style.width=(((total-rem)/total)*100)+'%';
+    msg.textContent=stepMsg;
+    btn.textContent='⏸ '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  },1000);
+}
+
+function runStep5(){
+  var btn=document.getElementById('stb5');
+  var disp=document.getElementById('std5');
+  var dig=document.getElementById('std5dig');
+  var bar=document.getElementById('std5bar');
+  var msg=document.getElementById('std5msg');
+  var stir=document.getElementById('stirEl');
+  if(ST[5].running){
+    clearInterval(ST[5].int);ST[5].running=false;
+    btn.classList.remove('run');
+    var rt2=getRT(cups);btn.textContent='▶ Start Reduction Timer — '+rt2.txt;
+    return;
+  }
+  var rt=getRT(cups),total=rt.hi*60,rem=total;
+  disp.classList.add('vis');disp.classList.remove('fin-s');
+  btn.classList.add('run');btn.classList.remove('fin');
+  ST[5].running=true;
+  ST[5].int=setInterval(function(){
+    rem--;
+    if(rem<=0){
+      clearInterval(ST[5].int);ST[5].running=false;
+      dig.textContent='DONE!';bar.style.width='100%';
+      msg.textContent='✅ Add sugar now!';
+      btn.textContent='✅ Reduction Done';btn.classList.add('fin');btn.classList.remove('run');
+      disp.classList.add('fin-s');
+      if(navigator.vibrate)navigator.vibrate([400,150,400,150,400]);
+      showToast('⏰ Chai ready! Add sugar now.');return;
+    }
+    var m=Math.floor(rem/60),s=rem%60;
+    dig.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    bar.style.width=(((total-rem)/total)*100)+'%';
+    btn.textContent='⏸ '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if(rem%30===0&&rem>0){
+      stir.classList.add('vis');
+      if(navigator.vibrate)navigator.vibrate(200);
+      setTimeout(function(){stir.classList.remove('vis');},2500);
+    }
+  },1000);
+}
+
+function resetAll(){
+  [2,3,4,5,6].forEach(function(s){
+    if(ST[s].int)clearInterval(ST[s].int);
+    ST[s].running=false;
+    var b=document.getElementById('stb'+s);
+    var d=document.getElementById('std'+s);
+    if(b){b.classList.remove('run','fin');}
+    if(d){d.classList.remove('vis','fin-s');}
+  });
+  var b5=document.getElementById('stb5');
+  if(b5){var rt=getRT(cups);b5.textContent='▶ Start Reduction Timer — '+rt.txt;}
+  [2,3,4,6].forEach(function(s){
+    var secsMap={2:120,3:60,4:180,6:60};
+    var d=document.getElementById('std'+s+'dig');
+    if(d){var t=secsMap[s];d.textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');}
+    var bar=document.getElementById('std'+s+'bar');if(bar)bar.style.width='0%';
+    var btn=document.getElementById('stb'+s);
+    if(btn){var t2=secsMap[s];btn.textContent='▶ '+String(Math.floor(t2/60)).padStart(2,'0')+':'+String(t2%60).padStart(2,'0');}
+  });
+}
+
+function markDone(step){
+  var el=document.getElementById('db'+step);
+  if(el){el.textContent=step===7?'✅ Served!':'✅ Done';el.classList.add('fin');}
+}
+
+function goTab(name){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab,.ni').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('p_'+name).classList.add('active');
+  ['recipe','cost','share','about'].forEach(function(t,i){
+    document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
+  });
+  document.getElementById('n_'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// LANG TOGGLE
+var HI={
+  lCups:'कितने गिलास? (80 मिली प्रत्येक)',
+  lType:'कोई भी संख्या:',lGoBtn:'जाएं',
+  lComm:'🔥 कमर्शियल बर्नर',lCommSub:'हाई पावर गैस — समय ~25% कम',
+  comNote:'⚡ कमर्शियल टाइम लागू — हर 20 सेकंड में चलाएं',
+  lIng:'सामग्री',lMethod:'विधि — हर स्टेप का टाइमर टैप करें',
+  iMilkL:'पूर्ण वसा दूध (अमूल) — 2× गिलास',
+  iWaterL:'पानी',iTeaL:'वाघ बकरी CTC चाय',
+  iElL:'हरी इलायची',iGinL:'ताज़ी अदरक',iSugL:'चीनी',
+  s1T:'मसाले कूटें',s7T:'छानें और परोसें',
+  s1D:'इलायची को हल्के से तोड़ें — पाउडर नहीं। अदरक को कूटें।',
+  s2D:'पानी उबालें। मसाले डालें। तेज़ आंच पर 2 मिनट।',
+  s3D:'चाय पत्ती डालें। तेज़ आंच पर 1 पूरा मिनट। गहरा रंग — यहीं से रंग, खुशबू, स्वाद आता है।',
+  s4D:'सारा दूध एक बार में डालें। आंच तेज़ रखें। पूरा उबाल लाएं।',
+  s5D:'आंच मध्यम करें। हर 30 सेकंड में चलाएं। दूध आधा होकर गाढ़ा बनेगा।',
+  s6D:'चीनी डालें। अच्छे से मिलाएं। एक और उबाल। मिठास देखें।',
+  s7D:'बारीक छलनी से छानें। 100मिली गिलास में 80मिली भरें। गरम-गरम परोसें।',
+  lCostR:'लागत और लाभ',lTotal:'कुल लागत',lPerG:'प्रति गिलास लागत',
+  lTips:'सुझाव',
+  t1:'160मिली दूध → ~80मिली चाय। 100मिली गिलास में 80मिली भरें।',
+  t2:'पतला बर्तन इस्तेमाल करें — चौड़े में जल्दी घटता है।',
+  t3:'चम्मच टेस्ट — चाय चिपकनी चाहिए। पतली = 2-3 मिनट और।',
+  t4:'1 मिनट तेज़ आंच पर चाय पत्ती — रंग, खुशबू, स्वाद यहीं से।',
+  t5:'कमर्शियल बर्नर ON = सभी समय 25% कम।'
+};
+var EN={
+  lCups:'How many glasses? (80ml served per glass)',
+  lType:'Type any qty:',lGoBtn:'Go',
+  lComm:'🔥 Commercial Burner',lCommSub:'High-power gas — reduces time ~25%',
+  comNote:'⚡ Commercial times applied — stir every 20 sec',
+  lIng:'Ingredients',lMethod:'Method — Tap ▶ to start each step',
+  iMilkL:'Full-fat Milk (Amul) — 2× glasses',
+  iWaterL:'Water',iTeaL:'Wagh Bakri CTC Tea',
+  iElL:'Elaichi (pods)',iGinL:'Fresh Ginger',iSugL:'Sugar',
+  s1T:'Crush Spices',s7T:'Strain & Serve',
+  s1D:"Lightly crack elaichi — just open, don't powder. Roughly crush ginger.",
+  s2D:'Bring water to boil. Add spices. HIGH flame 2 minutes — spices bloom fully.',
+  s3D:'Add tea leaves. Boil hard on HIGH 1 full minute. Must turn very dark — colour, aroma and taste all come from here.',
+  s4D:'Pour all milk at once. KEEP HIGH flame. Stir continuously until full rolling boil.',
+  s5D:'Lower to MEDIUM heat. Stir every 30 sec. Milk reduces to half — thick and creamy.',
+  s6D:'Add sugar. Stir well. One final boil. Taste and adjust sweetness.',
+  s7D:'Strain through fine mesh. Fill 100ml glass to 80ml. Serve piping hot immediately.',
+  lCostR:'Cost & Profit',lTotal:'Total cost',lPerG:'Per glass cost',
+  lTips:'Tips',
+  t1:'Yield: 160ml milk → ~80ml chai served. 100ml glass filled at 80ml is authentic.',
+  t2:'Use narrowest pot — wide pan loses steam and over-reduces fast.',
+  t3:'Spoon test — chai should coat the back. Watery = 2–3 more min.',
+  t4:'Full 1 min on HIGH for tea leaves — colour, aroma and taste all come from here.',
+  t5:'Toggle Commercial Burner ON → all step times auto-reduce 25%.'
+};
+function toggleLang(){
+  isH=!isH;
+  var D=isH?HI:EN;
+  document.getElementById('lngBtn').textContent=isH?'English':'हिंदी';
+  Object.keys(D).forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.textContent=D[id];
+  });
+}
+
+function shareWA(){
+  var msg=encodeURIComponent('☕ *Green Park Food Corner Tea*\n\nSpecial Doodh Chai Calculator:\n✅ Type any quantity\n✅ Timer for every step\n✅ Commercial burner toggle\n✅ Cost & profit calculator\n✅ Hindi / English\n\nOpen on any phone: '+URL_+'\n\n_By Pinak Services LLP & The Urban Events_');
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+function shareNative(){
+  if(navigator.share)navigator.share({title:'Green Park Chai Tool',url:URL_}).catch(function(){});
+  else copyLink();
+}
+function shareRecipeWA(){
+  var c=cups,rt=getRT(c);
+  var msg=encodeURIComponent(
+    '☕ *Green Park Food Corner Tea*\n*Special Doodh Chai — '+c+' Glass'+(c>1?'es':'')+' *\n\n'+
+    '🥛 Milk: '+ml(PC.milk*c)+'\n'+
+    '💧 Water: '+ml(PC.water*c)+'\n'+
+    '🍂 Tea: '+fmtTea(PC.teaG*c)+'\n'+
+    '🌿 Elaichi: '+(PC.elaichi*c)+' pods\n'+
+    '🫚 Ginger: '+fmtGin(PC.ginG*c)+'\n'+
+    '🍬 Sugar: '+fmtSug(PC.sugG*c)+'\n\n'+
+    '1️⃣ Boil water+spices — 2min HIGH\n'+
+    '2️⃣ Add tea — 1min HIGH (deep colour = good taste)\n'+
+    '3️⃣ Add milk — full boil HIGH\n'+
+    '4️⃣ MEDIUM — reduce '+rt.txt+(commercial?' (commercial burner)':'')+', stir every 30sec\n'+
+    '5️⃣ Add sugar — 1min\n'+
+    '6️⃣ Strain into 100ml glass at 80ml level\n\n'+
+    'Yield: ~'+ml(c*80)+'\n_Green Park Food Corner · Jaipur_'
+  );
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+function copyLink(){
+  navigator.clipboard.writeText(URL_).then(function(){
+    var btn=document.getElementById('cpBtn');btn.textContent='Copied!';
+    showToast('Link copied!');
+    setTimeout(function(){btn.textContent='Copy';},2500);
+  }).catch(function(){showToast('Select the link above to copy');});
+}
+function showToast(msg){
+  var t=document.getElementById('toast');t.textContent=msg;
+  t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);
+}
+
+upd();
+</script>
+</body>
+</html>
