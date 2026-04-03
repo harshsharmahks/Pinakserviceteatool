@@ -419,7 +419,7 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
       <button class="sa sa-g" onclick="shareNative()">📤 Share via...</button>
       <button class="sa sa-s" onclick="copyLink()">📋 Copy Link</button>
     </div>
-    <div class="urlbox"><span id="urlTxt">https://purple-cherri-67.tiiny.site</span><button class="copybtn" onclick="copyLink()" id="cpBtn">Copy</button></div>
+    <div class="urlbox"><span id="urlTxt">https://harshsharmahks.github.io/Pinakserviceteatool/</span><button class="copybtn" onclick="copyLink()" id="cpBtn">Copy</button></div>
   </div>
   <div class="itip">
     <h4>📱 Save to Home Screen — Works Like an App</h4>
@@ -477,7 +477,7 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
 
 <script>
 var cups=1, commercial=false, isH=false, cupMode='glass', milkMl=500;
-var URL_='https://purple-cherri-67.tiiny.site';
+var URL_='https://harshsharmahks.github.io/Pinakserviceteatool/';
 var PC={milk:160,water:40,teaG:2,elaichi:2,ginG:6,sugG:10};
 var RATES={milk:0.067,tea:0.522,el:2.5,gin:0.1,sug:0.06};
 
@@ -490,7 +490,12 @@ function fmtL(ml_){
   return ml_+' ml';
 }
 function getRT(c){
-  var lo=6+Math.ceil((c-1)*1.5),hi=lo+2;
+  // Square root scaling — time grows much slower than quantity
+  // Base: 1 glass = 6-8 min. Formula: base + 4 × (√glasses - 1)
+  var lo = Math.round(6 + 4*(Math.sqrt(c)-1));
+  var hi = lo + 2;
+  // Cap at realistic maximums
+  if(lo>45) lo=45; if(hi>47) hi=47;
   if(commercial){lo=Math.round(lo*0.75);hi=Math.round(hi*0.75);}
   return{lo:lo,hi:hi,txt:lo+'–'+hi+' min'};
 }
