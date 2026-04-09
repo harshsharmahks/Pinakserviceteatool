@@ -114,6 +114,30 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
 .sug-item:last-child{border:none}
 .sug-item:active{background:rgba(13,26,60,0.08)}
 .sug-right{font-size:11px;color:var(--grey)}
+/* INDUCTION PANEL */
+.ind-card{background:rgba(100,80,220,0.08);border:1px solid rgba(100,80,220,0.25);border-radius:14px;padding:14px;margin-bottom:8px}
+.ind-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ind-title{font-size:13px;font-weight:500;color:var(--cream)}
+.ind-sub{font-size:10px;color:rgba(251,246,236,0.4);margin-top:2px}
+.ind-watt-val{font-family:'Playfair Display',serif;font-size:22px;color:#a78bfa;font-weight:700}
+.watt-slider{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,#6d28d9,#a78bfa);border-radius:3px;outline:none;margin-bottom:4px}
+.watt-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#a78bfa;cursor:pointer;border:3px solid #fff}
+.watt-scale{display:flex;justify-content:space-between;font-size:9px;color:rgba(251,246,236,0.3);margin-bottom:10px}
+.level-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.lv{flex:1;min-width:32px;padding:5px 2px;border-radius:8px;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);text-align:center;cursor:pointer;font-size:10px;font-weight:500;color:#a78bfa;transition:all 0.15s}
+.lv div{font-size:8px;color:rgba(251,246,236,0.3);margin-top:1px}
+.lv.active-lv{background:rgba(167,139,250,0.25);border-color:#a78bfa;color:#fff}
+.ind-note{font-size:10px;color:rgba(167,139,250,0.6);text-align:center}
+/* INDUCTION STEP BADGE */
+.ind-badge{display:none;background:rgba(109,40,217,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:8px;padding:6px 10px;margin-top:6px;font-size:11px;color:#c4b5fd;line-height:1.5}
+.ind-badge strong{color:#a78bfa}
+.show-ind .ind-badge{display:block}
+/* STOVE SELECTOR */
+.stove-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+.stove-btn{padding:8px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:rgba(251,246,236,0.5);font-size:16px;cursor:pointer;text-align:center;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+.stove-btn div{font-size:9px;margin-top:3px;line-height:1.2}
+.stove-btn.active{border-color:var(--gold);background:rgba(196,154,42,0.12);color:var(--gold2)}
+.stove-note{background:rgba(196,154,42,0.08);border:1px solid var(--border);border-radius:10px;padding:7px 12px;font-size:11px;color:var(--gold2);text-align:center;margin-bottom:8px}
 /* TIPS */
 .tips{background:rgba(42,90,55,0.1);border:1px solid rgba(42,90,55,0.22);border-radius:14px;padding:14px}
 .tip{display:flex;gap:8px;padding:5px 0;font-size:12px;color:rgba(251,246,236,0.58);line-height:1.5}
@@ -251,105 +275,156 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
     <div class="ynote" id="yBanner">160ml milk → ~1 glass (80ml served)</div>
   </div>
 
-  <div class="tog-row">
-    <div>
-      <div class="tog-lbl" id="lComm">🔥 Commercial Burner</div>
-      <div class="tog-sub" id="lCommSub">High-power gas — reduces time ~25%</div>
-    </div>
-    <label class="tog">
-      <input type="checkbox" id="commToggle" onchange="toggleComm()">
-      <span class="tog-sl"></span>
-    </label>
+  <!-- Stove Type Selector -->
+  <div class="sec">🔥 Stove Type</div>
+  <div class="stove-grid">
+    <button class="stove-btn active" id="stv0" onclick="setStove(0)">🔥<div>Home Gas</div></button>
+    <button class="stove-btn" id="stv1" onclick="setStove(1)">🔥🔥<div>Comm. Gas</div></button>
+    <button class="stove-btn" id="stv2" onclick="setStove(2)">🔌<div>Home Induction</div></button>
+    <button class="stove-btn" id="stv3" onclick="setStove(3)">🏭<div>Comm. Induction</div></button>
   </div>
-  <div class="com-note" id="comNote">⚡ Commercial times applied — stir every 20 sec</div>
+  <div class="stove-note" id="stoveNote">🔥 Home gas — standard times</div>
+
+  <!-- Induction wattage panel — shown only for induction modes -->
+  <div id="inductionPanel" style="display:none">
+    <div class="ind-card">
+      <div class="ind-top">
+        <div>
+          <div class="ind-title">⚡ Induction Max Power</div>
+          <div class="ind-sub" id="indWattSub">1800W — Level 9 (High)</div>
+        </div>
+        <div class="ind-watt-val" id="indWattVal">1800W</div>
+      </div>
+      <!-- Wattage slider -->
+      <input type="range" id="wattSlider" min="600" max="2200" step="200" value="1800"
+        class="watt-slider" oninput="setWattage(this.value)">
+      <div class="watt-scale">
+        <span>600W</span><span>1000W</span><span>1400W</span><span>1800W</span><span>2200W</span>
+      </div>
+      <!-- Level indicators -->
+      <div class="level-row" id="levelRow">
+        <div class="lv" onclick="setWattage(400)">L1<div>400W</div></div>
+        <div class="lv" onclick="setWattage(600)">L2<div>600W</div></div>
+        <div class="lv" onclick="setWattage(800)">L3<div>800W</div></div>
+        <div class="lv" onclick="setWattage(1000)">L4<div>1000W</div></div>
+        <div class="lv" onclick="setWattage(1200)">L5<div>1200W</div></div>
+        <div class="lv" onclick="setWattage(1400)">L6<div>1400W</div></div>
+        <div class="lv" onclick="setWattage(1600)">L7<div>1600W</div></div>
+        <div class="lv" onclick="setWattage(1800)">L8<div>1800W</div></div>
+        <div class="lv" onclick="setWattage(2000)">L9<div>2000W</div></div>
+        <div class="lv" onclick="setWattage(2200)">MAX<div>2200W</div></div>
+      </div>
+      <div class="ind-note" id="indNote">Times auto-adjust based on your induction power</div>
+    </div>
+  </div>
 
   <div class="sec" id="lIng">Ingredients</div>
   <div class="igrid">
     <div class="ic full"><div class="ic-emo">🥛</div><div>
-      <div class="ic-name" id="iMilkL">Full-fat Milk (Amul) — 2× glasses</div>
-      <div class="ic-val" id="vMilk">160 ml</div>
+      <div class="ic-name" id="iMilkL">Full-fat Milk (Amul)</div>
+      <div class="ic-val" id="vMilk">100 ml</div>
     </div></div>
     <div class="ic"><div class="ic-emo">💧</div>
-      <div class="ic-name" id="iWaterL">Water</div><div class="ic-val" id="vWater">40 ml</div>
+      <div class="ic-name" id="iWaterL">Water</div><div class="ic-val" id="vWater">20 ml</div>
     </div>
     <div class="ic"><div class="ic-emo">🍂</div>
-      <div class="ic-name" id="iTeaL">Wagh Bakri CTC Tea</div><div class="ic-val" id="vTea">1 tsp (2g)</div>
+      <div class="ic-name" id="iTeaL">Wagh Bakri CTC Tea</div><div class="ic-val" id="vTea">0.3g</div>
     </div>
     <div class="ic"><div class="ic-emo">🌿</div>
-      <div class="ic-name" id="iElL">Elaichi (pods)</div><div class="ic-val" id="vEl">2 pods</div>
+      <div class="ic-name" id="iElL">Elaichi (pods)</div><div class="ic-val" id="vEl">1 pod</div>
     </div>
     <div class="ic"><div class="ic-emo">🫚</div>
-      <div class="ic-name" id="iGinL">Fresh Ginger</div><div class="ic-val" id="vGin">6 g</div>
+      <div class="ic-name" id="iGinL">Fresh Ginger</div><div class="ic-val" id="vGin">0.6 g</div>
     </div>
     <div class="ic full"><div class="ic-emo">🍬</div><div>
-      <div class="ic-name" id="iSugL">Sugar</div><div class="ic-val" id="vSug">1 tbsp</div>
+      <div class="ic-name" id="iSugL">Sugar</div><div class="ic-val" id="vSug">1.2 g</div>
     </div></div>
   </div>
 
-  <div class="sec" id="lMethod">Method — Tap ▶ to start each step</div>
+  <div class="sec" id="lMethod">Method — Tap ▶ to start each step timer</div>
 
-  <!-- Step 1 -->
+  <!-- Step 1 — Crush spices -->
   <div class="step"><div class="snum">1</div><div style="flex:1">
-    <div class="stitle" id="s1T">Crush Spices</div>
-    <div class="sdesc" id="s1D">Lightly crack elaichi pods — just open, don't powder. Roughly crush ginger. Same prep regardless of quantity.</div>
+    <div class="stitle" id="s1T">Crush Spices <span class="stag">Prep — no timer</span></div>
+    <div class="sdesc" id="s1D">Lightly crack elaichi pods — just open, do not powder. Roughly crush ginger. Same regardless of quantity.</div>
     <button class="done-btn" id="db1" onclick="markDone(1)">✓ Done</button>
   </div></div>
 
-  <!-- Step 2 — 2 min fixed -->
+  <!-- Step 2 — Boil water alone DYNAMIC -->
   <div class="step"><div class="snum">2</div><div style="flex:1">
-    <div class="stitle">Boil Water + Spices <span class="stag" id="s2tag">2 min</span></div>
-    <div class="sdesc" id="s2D">First bring water to a full rolling boil on HIGH. Then add crushed spices. Keep boiling 2 more minutes on HIGH — spices need boiling temperature to release oils and aroma fully.</div>
-    <button class="stb" id="stb2" onclick="runStep(2,120,'Boiling spices on HIGH...')">▶ 2:00</button>
-    <div class="std" id="std2"><div class="stdig" id="std2dig">02:00</div><div class="stprog"><div class="stbar" id="std2bar"></div></div><div class="stmsg" id="std2msg">Boiling spices on HIGH...</div></div>
+    <div class="stitle">Boil Water Alone <span class="stag dyn" id="s2tag">2 min</span></div>
+    <div class="sdesc" id="s2D">Add only water to vessel. HIGH flame. Bring to full rolling boil 100°C. No spices yet — pure water only.</div>
+    <div class="shi">🌡️ 100°C — full rolling boil with large bubbles</div>
+    <div class="ind-badge" id="ind2">🔌 Set induction to <strong>Level 9 / MAX (1800–2200W)</strong></div>
+    <button class="stb" id="stb2" onclick="runDynStep(2)">▶ <span id="stb2lbl">2:00</span></button>
+    <div class="std" id="std2"><div class="stdig" id="std2dig">02:00</div><div class="stprog"><div class="stbar" id="std2bar"></div></div><div class="stmsg" id="std2msg">Bringing water to full rolling boil...</div></div>
   </div></div>
 
-  <!-- Step 3 — 1 min fixed -->
+  <!-- Step 3 — Add milk + elaichi DYNAMIC -->
   <div class="step"><div class="snum">3</div><div style="flex:1">
-    <div class="stitle">Add Tea Leaves <span class="stag" id="s3tag">1 min</span></div>
-    <div class="sdesc" id="s3D">Add tea leaves. Boil hard on HIGH 1 full minute. Must turn very dark — this is where colour, aroma and taste comes from. Don't reduce this time.</div>
-    <button class="stb" id="stb3" onclick="runStep(3,60,'Full boil — deep colour forming!')">▶ 1:00</button>
-    <div class="std" id="std3"><div class="stdig" id="std3dig">01:00</div><div class="stprog"><div class="stbar" id="std3bar"></div></div><div class="stmsg" id="std3msg">Full boil — deep colour forming!</div></div>
+    <div class="stitle">Add Milk + Elaichi <span class="stag dyn" id="s3tag">5–6 min</span></div>
+    <div class="sdesc" id="s3D">Pour all milk into boiling water. Immediately add crushed elaichi. HIGH flame. Stir continuously. Wait for full rolling boil — milk will froth, keep stirring.</div>
+    <div class="shi">🌡️ 85°C frothing starts → 100°C rolling boil. Do not leave unattended!</div>
+    <div class="ind-badge" id="ind3">🔌 Set induction to <strong>Level 8–9 (1600–1800W)</strong> — watch for overflow</div>
+    <button class="stb" id="stb3" onclick="runDynStep(3)">▶ <span id="stb3lbl">5:00</span></button>
+    <div class="std" id="std3"><div class="stdig" id="std3dig">05:00</div><div class="stprog"><div class="stbar" id="std3bar"></div></div><div class="stmsg" id="std3msg">Watch for frothing — stir continuously!</div></div>
   </div></div>
 
-  <!-- Step 4 — ~3 min -->
+  <!-- Step 4 — Add ginger DYNAMIC -->
   <div class="step"><div class="snum">4</div><div style="flex:1">
-    <div class="stitle">Add Milk — HIGH Flame <span class="stag" id="s4tag">~3 min</span></div>
-    <div class="sdesc" id="s4D">Pour all milk at once. KEEP HIGH flame. Stir continuously until full rolling boil.</div>
-    <button class="stb" id="stb4" onclick="runStep(4,180,'Bring to full boil — keep stirring!')">▶ 3:00</button>
-    <div class="std" id="std4"><div class="stdig" id="std4dig">03:00</div><div class="stprog"><div class="stbar" id="std4bar"></div></div><div class="stmsg" id="std4msg">Bring to full boil — keep stirring!</div></div>
+    <div class="stitle">Add Ginger (Adrak) <span class="stag dyn" id="s4tag">1–2 min</span></div>
+    <div class="sdesc" id="s4D">As milk reaches rolling boil — add crushed ginger immediately. Stay on HIGH. Ginger at 95–100°C releases best flavour compounds.</div>
+    <div class="shi">🌡️ 95–100°C — keep full boil during this step</div>
+    <div class="ind-badge" id="ind4">🔌 Keep induction at <strong>Level 8 (1600W)</strong> — maintain full boil</div>
+    <button class="stb" id="stb4" onclick="runDynStep(4)">▶ <span id="stb4lbl">1:30</span></button>
+    <div class="std" id="std4"><div class="stdig" id="std4dig">01:30</div><div class="stprog"><div class="stbar" id="std4bar"></div></div><div class="stmsg" id="std4msg">Ginger releasing flavour — keep HIGH!</div></div>
   </div></div>
 
-  <!-- Step 5 — DYNAMIC -->
+  <!-- Step 5 — CTC tea FIXED 1 min -->
   <div class="step"><div class="snum">5</div><div style="flex:1">
-    <div class="stitle">Reduce &amp; Condense <span class="stag dyn" id="sTag">6–8 min</span></div>
-    <div class="sdesc" id="s5D">Lower to MEDIUM heat. Stir every 30 sec. Milk reduces to half — thick and creamy. This is the key step.</div>
-    <div class="shi" id="sNote">For 1 glass → 6–8 min on medium heat</div>
-    <button class="stb big" id="stb5" onclick="runStep5()">▶ Start Reduction Timer — 6–8 min</button>
-    <div class="std" id="std5">
-      <div class="stdig" id="std5dig">08:00</div>
-      <div class="stprog"><div class="stbar" id="std5bar"></div></div>
-      <div class="stmsg" id="std5msg">Stir every 30 seconds!</div>
+    <div class="stitle">Add CTC Tea <span class="stag">1 min — always fixed</span></div>
+    <div class="sdesc" id="s5D">Add Wagh Bakri CTC tea. Full rolling boil HIGH for exactly 1 minute. Deep colour, aroma and taste comes from here. Never reduce this time.</div>
+    <div class="shi">🌡️ Must be 100°C full boil — CTC needs maximum temperature</div>
+    <div class="ind-badge" id="ind5">🔌 Set induction to <strong>MAX / Boost (2000–2200W)</strong> — full power</div>
+    <button class="stb" id="stb5f" onclick="runStep('5f',60,'Full boil — deep colour forming! 100°C')">▶ 1:00 fixed</button>
+    <div class="std" id="std5f"><div class="stdig" id="std5fdig">01:00</div><div class="stprog"><div class="stbar" id="std5fbar"></div></div><div class="stmsg" id="std5fmsg">Full boil — deep colour forming!</div></div>
+  </div></div>
+
+  <!-- Step 6 — Reduce DYNAMIC -->
+  <div class="step"><div class="snum">6</div><div style="flex:1">
+    <div class="stitle">Reduce &amp; Condense <span class="stag dyn" id="sTag">12–14 min</span></div>
+    <div class="sdesc" id="s6D">Lower to MEDIUM heat. Stir every 30 sec. Milk reduces to 700ml per litre — thick and creamy. Key step — patience.</div>
+    <div class="shi" id="sNote">1L milk → 12–14 min on medium heat (home gas)</div>
+    <div class="shi" style="margin-top:4px">🌡️ 82–92°C — rolling simmer, not hard boil</div>
+    <div class="ind-badge" id="ind6">🔌 Set induction to <strong>Level 4–5 (800–1000W)</strong> — gentle steady simmer</div>
+    <button class="stb big" id="stb6r" onclick="runStep6r()">▶ Start Reduction Timer — <span id="stb6rlbl">12–14 min</span></button>
+    <div class="std" id="std6r">
+      <div class="stdig" id="std6rdig">14:00</div>
+      <div class="stprog"><div class="stbar" id="std6rbar"></div></div>
+      <div class="stmsg" id="std6rmsg">Stir every 30 seconds!</div>
       <div class="stir" id="stirEl">🥄 Stir now!</div>
     </div>
   </div></div>
 
-  <!-- Step 6 — 1 min -->
-  <div class="step"><div class="snum">6</div><div style="flex:1">
-    <div class="stitle">Add Sugar <span class="stag" id="s6tag">1 min</span></div>
-    <div class="sdesc" id="s6D">Add sugar. Stir well. One final boil. Taste and adjust sweetness.</div>
-    <button class="stb" id="stb6" onclick="runStep(6,60,'Final boil with sugar...')">▶ 1:00</button>
-    <div class="std" id="std6"><div class="stdig" id="std6dig">01:00</div><div class="stprog"><div class="stbar" id="std6bar"></div></div><div class="stmsg" id="std6msg">Final boil with sugar...</div></div>
-  </div></div>
-
-  <!-- Step 7 -->
+  <!-- Step 7 — Sugar FIXED 1 min -->
   <div class="step"><div class="snum">7</div><div style="flex:1">
-    <div class="stitle" id="s7T">Strain &amp; Serve</div>
-    <div class="sdesc" id="s7D">Strain through fine mesh. Fill 100ml glass to 70ml mark. Serve piping hot immediately.</div>
-    <div class="shi" id="yNote">Yield: ~70ml per glass · Total: ~70ml</div>
-    <button class="done-btn" id="db7" onclick="markDone(7)">✓ Served!</button>
+    <div class="stitle">Add Sugar <span class="stag">1 min — always fixed</span></div>
+    <div class="sdesc" id="s7D">Add sugar. Stir well. One final boil on HIGH. Taste and adjust sweetness.</div>
+    <div class="shi">🌡️ 90–95°C — bring back to boil after adding sugar</div>
+    <div class="ind-badge" id="ind7">🔌 Set induction to <strong>Level 7 (1400W)</strong> — bring back to boil</div>
+    <button class="stb" id="stb7" onclick="runStep('7',60,'Final boil — dissolving sugar...')">▶ 1:00 fixed</button>
+    <div class="std" id="std7"><div class="stdig" id="std7dig">01:00</div><div class="stprog"><div class="stbar" id="std7bar"></div></div><div class="stmsg" id="std7msg">Final boil — dissolving sugar...</div></div>
   </div></div>
 
-  <!-- Cost on Recipe Tab -->
+  <!-- Step 8 — Strain & serve -->
+  <div class="step"><div class="snum">8</div><div style="flex:1">
+    <div class="stitle" id="s8T">Strain &amp; Serve</div>
+    <div class="sdesc" id="s8D">Strain through fine mesh into 100ml glasses. Fill to 70ml mark. Serve piping hot immediately.</div>
+    <div class="shi" id="yNote">Yield: 10 glasses × 70ml per litre milk</div>
+    <button class="done-btn" id="db8" onclick="markDone(8)">✓ Served!</button>
+  </div></div>
+
+    <!-- Cost on Recipe Tab -->
   <div class="sec" id="lCostR">Cost &amp; Profit</div>
   <div class="ccard">
     <div class="crow"><span class="ck">🥛 Milk — <span id="milkQR">160ml</span> (₹67/L)</span><span class="cv" id="cMilk">—</span></div>
@@ -496,13 +571,109 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
 </div>
 
 <script>
-var cups=1, commercial=false, isH=false, cupMode='glass', milkMl=1000;
+var cups=1, stove=0, commercial=false, isH=false, cupMode='glass', milkMl=1000;
+var inductionWatts=1800; // default 1800W
 var URL_='https://harshsharmahks.github.io/Pinakserviceteatool/';
-// YIELD: 1000ml milk + 200ml water → 700ml chai → 10 glasses × 70ml served
-// Per glass: 100ml milk, 20ml water, 0.3g tea, 0.2 elaichi pods, 0.6g ginger, 1.2g sugar
 var PC={milk:100,water:20,teaG:0.3,elaichi:0.2,ginG:0.6,sugG:1.2};
 var RATES={milk:0.067,tea:0.522,el:2.5,gin:0.1,sug:0.06};
 var SERVE_ML=70;
+
+// Stove multipliers [waterBoil, milkBoil, ginger, reduction]
+var STOVE=[
+  {note:'🔥 Home gas — standard times',         m:[1.00,1.00,1.00,1.00]},
+  {note:'🔥🔥 Commercial gas — 28% faster',     m:[0.75,0.72,0.72,0.70]},
+  {note:'🔌 Home induction — 20% slower',       m:[1.25,1.20,1.20,1.25]},
+  {note:'🏭 Commercial induction — 10% faster', m:[1.00,0.88,0.88,0.90]}
+];
+// Base times in seconds for 10 glasses (1L milk)
+// Scale by sqrt(cups/10), then multiply by stove factor
+function getStepTime(key,c){
+  var sc=Math.sqrt(Math.max(1,c)/10);
+  var m=STOVE[stove].m;
+  var base={'2':120,'3':330,'4':90,'6r':780};
+  var mIdx={'2':0,'3':1,'4':2,'6r':3};
+  return Math.max(30,Math.round(base[key]*sc*m[mIdx[key]]));
+}
+function fmtTime(s){var m=Math.floor(s/60),sec=s%60;return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');}
+function fmtTimeLabel(s){var m=Math.floor(s/60),sec=s%60;return sec===0?m+' min':m+'m '+sec+'s';}
+function setStove(i){
+  stove=i;
+  document.querySelectorAll('.stove-btn').forEach(function(b,idx){b.classList.toggle('active',idx===i);});
+  s('stoveNote',STOVE[i].note);
+  // Show/hide induction panel
+  var isInd=(i===2||i===3);
+  document.getElementById('inductionPanel').style.display=isInd?'block':'none';
+  // Show/hide induction badges on all steps
+  var recipe=document.getElementById('p_recipe');
+  if(recipe)recipe.classList.toggle('show-ind',isInd);
+  // Set default wattage for induction type
+  if(i===2&&inductionWatts>2000)setWattage(1800);
+  if(i===3&&inductionWatts<1800)setWattage(2000);
+  resetAll();upd();
+}
+
+// Wattage levels reference
+var WATT_LEVELS=[
+  {w:400, lbl:'L1',desc:'Very low simmer'},
+  {w:600, lbl:'L2',desc:'Low simmer'},
+  {w:800, lbl:'L3',desc:'Low-medium'},
+  {w:1000,lbl:'L4',desc:'Medium low'},
+  {w:1200,lbl:'L5',desc:'Medium'},
+  {w:1400,lbl:'L6',desc:'Medium-high'},
+  {w:1600,lbl:'L7',desc:'High'},
+  {w:1800,lbl:'L8',desc:'Very high'},
+  {w:2000,lbl:'L9',desc:'Max power'},
+  {w:2200,lbl:'MAX',desc:'Boost mode'}
+];
+
+function setWattage(w){
+  inductionWatts=parseInt(w);
+  document.getElementById('wattSlider').value=inductionWatts;
+  // Update STOVE multiplier for active induction mode
+  // Base reference: 1800W home gas = 1.0
+  // Formula: multiplier = 1800/watts × stove base
+  var baseM=stove===3?0.88:1.20; // commercial ind vs home ind base
+  var wattFactor=1800/inductionWatts;
+  STOVE[stove].m=[
+    +(baseM*wattFactor).toFixed(3),
+    +(baseM*wattFactor).toFixed(3),
+    +(baseM*wattFactor).toFixed(3),
+    +((stove===3?0.90:1.25)*wattFactor).toFixed(3)
+  ];
+  // Find nearest level
+  var nearest=WATT_LEVELS.reduce(function(a,b){return Math.abs(b.w-inductionWatts)<Math.abs(a.w-inductionWatts)?b:a;});
+  s('indWattVal',inductionWatts+'W');
+  s('indWattSub',inductionWatts+'W — '+nearest.lbl+' ('+nearest.desc+')');
+  s('indNote','All step times calculated for '+inductionWatts+'W');
+  // Highlight active level button
+  document.querySelectorAll('.lv').forEach(function(el,i){
+    el.classList.toggle('active-lv',WATT_LEVELS[i]&&Math.abs(WATT_LEVELS[i].w-inductionWatts)<150);
+  });
+  // Update induction badges dynamically
+  var recLvls=getRecommendedLevels(inductionWatts);
+  if(document.getElementById('ind2'))document.getElementById('ind2').innerHTML='🔌 Set to <strong>'+recLvls.high+' — full power for water boil</strong>';
+  if(document.getElementById('ind3'))document.getElementById('ind3').innerHTML='🔌 Set to <strong>'+recLvls.high+' — watch for milk overflow</strong>';
+  if(document.getElementById('ind4'))document.getElementById('ind4').innerHTML='🔌 Set to <strong>'+recLvls.high+' — maintain full boil</strong>';
+  if(document.getElementById('ind5'))document.getElementById('ind5').innerHTML='🔌 Set to <strong>'+recLvls.max+' — max power for CTC</strong>';
+  if(document.getElementById('ind6'))document.getElementById('ind6').innerHTML='🔌 Set to <strong>'+recLvls.med+' — gentle simmer for reduction</strong>';
+  if(document.getElementById('ind7'))document.getElementById('ind7').innerHTML='🔌 Set to <strong>'+recLvls.medhigh+' — final boil</strong>';
+  resetAll();upd();
+}
+
+function getRecommendedLevels(maxW){
+  // Find level names for % of max power
+  function findLvl(targetW){
+    var w=Math.round(targetW/200)*200;
+    var lvl=WATT_LEVELS.find(function(l){return l.w===w;})||WATT_LEVELS[WATT_LEVELS.length-1];
+    return lvl.lbl+' ('+w+'W)';
+  }
+  return{
+    max: findLvl(maxW),
+    high: findLvl(maxW*0.85),
+    medhigh: findLvl(maxW*0.65),
+    med: findLvl(maxW*0.45)
+  };
+}
 
 // Milk mode: round to nearest 100ml for clean numbers
 function milkToGlass(m){return Math.max(1,Math.round(m/PC.milk));}
@@ -515,14 +686,11 @@ function fmtL(ml_){
   return ml_+' ml';
 }
 function getRT(c){
-  // Square root scaling — time grows much slower than quantity
-  // Base: 1 glass = 6-8 min. Formula: base + 4 × (√glasses - 1)
-  var lo = Math.round(6 + 4*(Math.sqrt(c)-1));
-  var hi = lo + 2;
-  // Cap at realistic maximums
-  if(lo>45) lo=45; if(hi>47) hi=47;
-  if(commercial){lo=Math.round(lo*0.75);hi=Math.round(hi*0.75);}
-  return{lo:lo,hi:hi,txt:lo+'–'+hi+' min'};
+  // Reduction: base 13 min for 10 glasses (1L milk), square root scale, stove adjusted
+  var t=getStepTime('6r',c);
+  var lo=Math.round(t/60)-1, hi=Math.round(t/60)+1;
+  if(lo<1)lo=1;
+  return{lo:lo,hi:hi,sec:t,txt:lo+'–'+hi+' min'};
 }
 function ml(v){return v>=1000?(v/1000).toFixed(v%1000===0?0:1)+' L':v+' ml';}
 function fmtTea(g){
@@ -627,10 +795,25 @@ function upd(){
   s('yBanner','1L milk+200ml water → 700ml chai → 10 glasses × 70ml');
   var rt=getRT(c);
   var stag=document.getElementById('sTag');if(stag)stag.textContent=rt.txt;
-  s('sNote','For '+c+' glass'+(c>1?'es':'')+' → '+rt.txt+(commercial?' (commercial burner)':' on medium heat'));
+  s('sNote','For '+c+' glass'+(c>1?'es':'')+' → '+rt.txt+(stove>0?' ('+STOVE[stove].note.split('—')[0].trim()+')':' on medium heat'));
   s('yNote',c+' glass'+(c>1?'es':'')+' × 70ml = '+ml(c*SERVE_ML)+' · needs '+ml(milk)+' milk');
-  var b5=document.getElementById('stb5');if(b5&&!ST[5].running)b5.textContent='▶ Start Reduction Timer — '+rt.txt;
-  var d5=document.getElementById('std5dig');if(d5&&!ST[5].running)d5.textContent=String(rt.hi).padStart(2,'0')+':00';
+  var b5=document.getElementById('stb6r');
+  if(b5&&!(ST['6r']&&ST['6r'].running)){
+    b5.innerHTML='▶ Start Reduction Timer — <span id="stb6rlbl">'+rt.txt+'</span>';
+  }
+  var d5=document.getElementById('std6rdig');
+  if(d5&&!(ST['6r']&&ST['6r'].running))d5.textContent=fmtTime(rt.sec);
+  // Update dynamic step labels (2,3,4)
+  ['2','3','4'].forEach(function(k){
+    if(ST[k]&&ST[k].running)return;
+    var t=getStepTime(k,cups);
+    var lbl=document.getElementById('stb'+k+'lbl');if(lbl)lbl.textContent=fmtTime(t);
+    var dig=document.getElementById('std'+k+'dig');if(dig)dig.textContent=fmtTime(t);
+    var tag=document.getElementById('s'+k+'tag');
+    if(tag)tag.textContent=fmtTimeLabel(t);
+  });
+  s('sTag',rt.txt);
+  s('sNote',cups<=10?'1L milk → '+rt.txt+' ('+STOVE[stove].note.split('—')[0].trim()+')':cups+' glasses → '+rt.txt);
 
   // Cost — elaichi cost based on actual pod weight ~1.2g per pod
   var cM=milk*RATES.milk,cT=teaG*RATES.tea,cE=elP*1.2*RATES.el;
@@ -653,26 +836,23 @@ function upd(){
   // Sales & Profit projection — uses inputs from cost tab
   calcSalesProfit(pc);
 }
-function toggleComm(){commercial=document.getElementById('commToggle').checked;document.getElementById('comNote').classList.toggle('vis',commercial);resetAll();upd();}
-
 function calcSalesProfit(perGlassCost){
   var pc=perGlassCost;
-  // If not passed, recalculate from current cups
   if(pc===undefined){
     var c=cups,milk=PC.milk*c,teaG=PC.teaG*c,elP=PC.elaichi*c,ginG=PC.ginG*c,sugG=PC.sugG*c;
     var cM=milk*RATES.milk,cT=teaG*RATES.tea,cE=elP*1.2*RATES.el,cG=ginG*RATES.gin,cS=sugG*RATES.sug;
     pc=(cM+cT+cE+cG+cS)/c;
   }
-  var dailyG=parseInt(document.getElementById('spGlasses').value)||200;
-  var sellP=parseInt(document.getElementById('spPrice').value)||30;
+  var spG=document.getElementById('spGlasses'),spP=document.getElementById('spPrice');
+  if(!spG||!spP)return;
+  var dailyG=parseInt(spG.value)||200;
+  var sellP=parseInt(spP.value)||30;
   var dailyRev=dailyG*sellP;
   var dailyCost=dailyG*pc;
   var dailyProfit=dailyRev-dailyCost;
-  var margin=((dailyProfit/dailyRev)*100).toFixed(1);
-  var monRev=dailyRev*30;
-  var monProfit=dailyProfit*30;
-  var annRev=dailyRev*365;
-  var annProfit=dailyProfit*365;
+  var margin=dailyRev>0?((dailyProfit/dailyRev)*100).toFixed(1):0;
+  var monRev=dailyRev*30,monProfit=dailyProfit*30;
+  var annRev=dailyRev*365,annProfit=dailyProfit*365;
   function fmt(n){if(n>=100000)return '₹'+(n/100000).toFixed(1)+'L';if(n>=1000)return '₹'+(n/1000).toFixed(1)+'k';return '₹'+Math.round(n);}
   s('spPerG','₹'+pc.toFixed(2));
   s('spDailyRev',fmt(dailyRev));
@@ -682,113 +862,169 @@ function calcSalesProfit(perGlassCost){
   s('spMonProfit',fmt(monProfit));
   s('spAnnRev',fmt(annRev));
   s('spAnnProfit',fmt(annProfit));
-  // Colour profit green/red
   var el=document.getElementById('spDailyProfit');
   if(el)el.style.color=dailyProfit>0?'#7dcc8a':'#e06060';
 }
 
-// STEP TIMERS
-var ST={2:{},3:{},4:{},5:{},6:{}};
+function toggleComm(){}// legacy stub
 
-function runStep(step,secs,stepMsg){
-  var btn=document.getElementById('stb'+step);
-  var disp=document.getElementById('std'+step);
-  var dig=document.getElementById('std'+step+'dig');
-  var bar=document.getElementById('std'+step+'bar');
-  var msg=document.getElementById('std'+step+'msg');
-  if(ST[step].running){
-    clearInterval(ST[step].int);ST[step].running=false;
+// ── STEP TIMERS ──
+// ST keys: 2,3,4,'5f',6r,7,'8'
+var ST={};
+['2','3','4','5f','6r','7','8'].forEach(function(k){ST[k]={};});
+
+function runStep(key,secs,stepMsg){
+  var btn=document.getElementById('stb'+key);
+  var disp=document.getElementById('std'+key);
+  var dig=document.getElementById('std'+key+'dig');
+  var bar=document.getElementById('std'+key+'bar');
+  var msg=document.getElementById('std'+key+'msg');
+  if(!btn||!disp||!dig||!bar)return;
+  if(ST[key].running){
+    clearInterval(ST[key].int);ST[key].running=false;
     btn.classList.remove('run');
-    var mm=secs;btn.textContent='▶ '+String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0');
+    btn.innerHTML='▶ '+fmtTime(secs)+' fixed';
     return;
   }
   var total=secs,rem=total;
   disp.classList.add('vis');disp.classList.remove('fin-s');
   btn.classList.add('run');btn.classList.remove('fin');
-  ST[step].running=true;
-  ST[step].int=setInterval(function(){
+  ST[key].running=true;
+  ST[key].int=setInterval(function(){
     rem--;
     if(rem<=0){
-      clearInterval(ST[step].int);ST[step].running=false;
+      clearInterval(ST[key].int);ST[key].running=false;
       dig.textContent='DONE!';bar.style.width='100%';
-      msg.textContent='✅ Step done — move to next!';
-      btn.textContent='✅ Done';btn.classList.add('fin');btn.classList.remove('run');
+      if(msg)msg.textContent='✅ Done — next step!';
+      btn.innerHTML='✅ Done';btn.classList.add('fin');btn.classList.remove('run');
       disp.classList.add('fin-s');
       if(navigator.vibrate)navigator.vibrate([300,100,300]);
-      showToast('Step '+step+' done ✅');return;
+      showToast('Step done ✅');return;
     }
-    var m=Math.floor(rem/60),s=rem%60;
-    dig.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    dig.textContent=fmtTime(rem);
     bar.style.width=(((total-rem)/total)*100)+'%';
-    msg.textContent=stepMsg;
-    btn.textContent='⏸ '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if(msg)msg.textContent=stepMsg;
+    btn.innerHTML='⏸ '+fmtTime(rem);
   },1000);
 }
 
-function runStep5(){
-  var btn=document.getElementById('stb5');
-  var disp=document.getElementById('std5');
-  var dig=document.getElementById('std5dig');
-  var bar=document.getElementById('std5bar');
-  var msg=document.getElementById('std5msg');
-  var stir=document.getElementById('stirEl');
-  if(ST[5].running){
-    clearInterval(ST[5].int);ST[5].running=false;
+// Dynamic steps — time calculated from quantity + stove
+function runDynStep(key){
+  var secs=getStepTime(String(key),cups);
+  var btn=document.getElementById('stb'+key);
+  var disp=document.getElementById('std'+key);
+  var dig=document.getElementById('std'+key+'dig');
+  var bar=document.getElementById('std'+key+'bar');
+  var msgs={'2':'Bringing water to full rolling boil...','3':'Watch for frothing — stir continuously!','4':'Ginger releasing flavour — keep HIGH!'};
+  if(!btn||!disp||!dig||!bar)return;
+  if(ST[key].running){
+    clearInterval(ST[key].int);ST[key].running=false;
     btn.classList.remove('run');
-    var rt2=getRT(cups);btn.textContent='▶ Start Reduction Timer — '+rt2.txt;
+    var lbl=document.getElementById('stb'+key+'lbl');
+    if(lbl)lbl.textContent=fmtTime(secs);
     return;
   }
-  var rt=getRT(cups),total=rt.hi*60,rem=total;
+  var total=secs,rem=total;
   disp.classList.add('vis');disp.classList.remove('fin-s');
   btn.classList.add('run');btn.classList.remove('fin');
-  ST[5].running=true;
-  ST[5].int=setInterval(function(){
+  ST[key].running=true;
+  ST[key].int=setInterval(function(){
     rem--;
     if(rem<=0){
-      clearInterval(ST[5].int);ST[5].running=false;
+      clearInterval(ST[key].int);ST[key].running=false;
       dig.textContent='DONE!';bar.style.width='100%';
-      msg.textContent='✅ Add sugar now!';
-      btn.textContent='✅ Reduction Done';btn.classList.add('fin');btn.classList.remove('run');
+      var msg=document.getElementById('std'+key+'msg');
+      if(msg)msg.textContent='✅ Done — next step!';
+      btn.innerHTML='✅ Done';btn.classList.add('fin');btn.classList.remove('run');
+      disp.classList.add('fin-s');
+      if(navigator.vibrate)navigator.vibrate([300,100,300]);
+      showToast('Step done ✅');return;
+    }
+    dig.textContent=fmtTime(rem);
+    bar.style.width=(((total-rem)/total)*100)+'%';
+    var msg=document.getElementById('std'+key+'msg');
+    if(msg&&msgs[key])msg.textContent=msgs[key];
+    btn.innerHTML='⏸ '+fmtTime(rem);
+  },1000);
+}
+
+// Reduction timer (step 6r) with stir reminder
+function runStep6r(){
+  var key='6r';
+  var btn=document.getElementById('stb6r');
+  var disp=document.getElementById('std6r');
+  var dig=document.getElementById('std6rdig');
+  var bar=document.getElementById('std6rbar');
+  var msg=document.getElementById('std6rmsg');
+  var stir=document.getElementById('stirEl');
+  if(!btn||!disp||!dig)return;
+  if(ST[key].running){
+    clearInterval(ST[key].int);ST[key].running=false;
+    btn.classList.remove('run');
+    var rt2=getRT(cups);
+    btn.innerHTML='▶ Start Reduction Timer — <span id="stb6rlbl">'+rt2.txt+'</span>';
+    return;
+  }
+  var rt=getRT(cups),total=rt.sec,rem=total;
+  disp.classList.add('vis');disp.classList.remove('fin-s');
+  btn.classList.add('run');btn.classList.remove('fin');
+  ST[key].running=true;
+  ST[key].int=setInterval(function(){
+    rem--;
+    if(rem<=0){
+      clearInterval(ST[key].int);ST[key].running=false;
+      dig.textContent='DONE!';bar.style.width='100%';
+      if(msg)msg.textContent='✅ Add sugar now!';
+      btn.innerHTML='✅ Reduction Done';btn.classList.add('fin');btn.classList.remove('run');
       disp.classList.add('fin-s');
       if(navigator.vibrate)navigator.vibrate([400,150,400,150,400]);
       showToast('⏰ Chai ready! Add sugar now.');return;
     }
-    var m=Math.floor(rem/60),s=rem%60;
-    dig.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    dig.textContent=fmtTime(rem);
     bar.style.width=(((total-rem)/total)*100)+'%';
-    btn.textContent='⏸ '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    btn.innerHTML='⏸ '+fmtTime(rem);
     if(rem%30===0&&rem>0){
-      stir.classList.add('vis');
+      if(stir)stir.classList.add('vis');
       if(navigator.vibrate)navigator.vibrate(200);
-      setTimeout(function(){stir.classList.remove('vis');},2500);
+      setTimeout(function(){if(stir)stir.classList.remove('vis');},2500);
     }
   },1000);
 }
 
 function resetAll(){
-  [2,3,4,5,6].forEach(function(s){
-    if(ST[s].int)clearInterval(ST[s].int);
-    ST[s].running=false;
-    var b=document.getElementById('stb'+s);
-    var d=document.getElementById('std'+s);
+  ['2','3','4','5f','6r','7','8'].forEach(function(k){
+    if(ST[k]&&ST[k].int)clearInterval(ST[k].int);
+    if(ST[k])ST[k].running=false;
+    var b=document.getElementById('stb'+k);
+    var d=document.getElementById('std'+k);
     if(b){b.classList.remove('run','fin');}
     if(d){d.classList.remove('vis','fin-s');}
   });
-  var b5=document.getElementById('stb5');
-  if(b5){var rt=getRT(cups);b5.textContent='▶ Start Reduction Timer — '+rt.txt;}
-  [2,3,4,6].forEach(function(s){
-    var secsMap={2:120,3:60,4:180,6:60};
-    var d=document.getElementById('std'+s+'dig');
-    if(d){var t=secsMap[s];d.textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');}
-    var bar=document.getElementById('std'+s+'bar');if(bar)bar.style.width='0%';
-    var btn=document.getElementById('stb'+s);
-    if(btn){var t2=secsMap[s];btn.textContent='▶ '+String(Math.floor(t2/60)).padStart(2,'0')+':'+String(t2%60).padStart(2,'0');}
+  // Reset dynamic labels
+  var dynKeys=['2','3','4'];
+  dynKeys.forEach(function(k){
+    var t=getStepTime(k,cups);
+    var lbl=document.getElementById('stb'+k+'lbl');
+    if(lbl)lbl.textContent=fmtTime(t);
+    var dig=document.getElementById('std'+k+'dig');
+    if(dig)dig.textContent=fmtTime(t);
+    var bar=document.getElementById('std'+k+'bar');
+    if(bar)bar.style.width='0%';
   });
+  // Reset reduction
+  var rt=getRT(cups);
+  var b6r=document.getElementById('stb6r');
+  if(b6r)b6r.innerHTML='▶ Start Reduction Timer — <span id="stb6rlbl">'+rt.txt+'</span>';
+  var d6r=document.getElementById('std6rdig');
+  if(d6r)d6r.textContent=fmtTime(rt.sec);
+  var bar6r=document.getElementById('std6rbar');
+  if(bar6r)bar6r.style.width='0%';
 }
 
 function markDone(step){
-  var el=document.getElementById('db'+step);
-  if(el){el.textContent=step===7?'✅ Served!':'✅ Done';el.classList.add('fin');}
+  var id='db'+step;
+  var el=document.getElementById(id);
+  if(el){el.textContent=step===8?'✅ Served!':'✅ Done';el.classList.add('fin');}
 }
 
 function goTab(name){
@@ -884,7 +1120,7 @@ function shareRecipeWA(){
     '1️⃣ Boil water+spices — 2min HIGH\n'+
     '2️⃣ Add tea — 1min HIGH (deep colour = good taste)\n'+
     '3️⃣ Add milk — full boil HIGH\n'+
-    '4️⃣ MEDIUM — reduce '+rt.txt+(commercial?' (commercial burner)':'')+', stir every 30sec\n'+
+    '4️⃣ MEDIUM — reduce '+rt.txt+(stove>0?' ('+STOVE[stove].note.split('—')[0].trim()+')':'')+', stir every 30sec\n'+
     '5️⃣ Add sugar — 1min\n'+
     '6️⃣ Strain into 100ml glass at 80ml level\n\n'+
     'Yield: ~'+ml(c*80)+'\n_Green Park Food Corner · Jaipur_'
