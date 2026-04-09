@@ -186,7 +186,7 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
 
     <!-- GLASS MODE -->
     <div id="glassSection">
-      <span class="clbl" style="margin-top:10px">How many glasses? (80ml served per glass)</span>
+      <span class="clbl" style="margin-top:10px">How many glasses? (70ml served per glass)</span>
       <div class="cup-row">
         <button class="cup-btn" onclick="chg(-1)">−</button>
         <div class="cup-disp">
@@ -218,14 +218,14 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
 
     <!-- MILK MODE -->
     <div id="milkSection" style="display:none">
-      <span class="clbl" style="margin-top:10px">How much milk? (multiples of ½ litre)</span>
+      <span class="clbl" style="margin-top:10px">How much milk? (steps of 100ml)</span>
       <div class="cup-row">
-        <button class="cup-btn" onclick="chgMilk(-500)">−</button>
+        <button class="cup-btn" onclick="chgMilk(-100)">−</button>
         <div class="cup-disp">
-          <div class="cup-num" id="milkN">0.5 L</div>
-          <div class="cup-sub" id="milkSub">~3 glasses</div>
+          <div class="cup-num" id="milkN">1L</div>
+          <div class="cup-sub" id="milkSub">~10 glasses</div>
         </div>
-        <button class="cup-btn" onclick="chgMilk(500)">+</button>
+        <button class="cup-btn" onclick="chgMilk(100)">+</button>
       </div>
       <div class="inp-wrap" style="margin-top:8px">
         <span class="inp-lbl">Litres:</span>
@@ -237,9 +237,9 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
       </div>
       <div class="sug-box" id="milkSug"></div>
       <div class="qrow">
-        <button class="qb" onclick="setMilk(500,this)">½ L</button>
-        <button class="qb" onclick="setMilk(1000,this)">1 L</button>
-        <button class="qb" onclick="setMilk(1500,this)">1½ L</button>
+        <button class="qb" onclick="setMilk(500,this)">500ml</button>
+        <button class="qb active" onclick="setMilk(1000,this)">1 L</button>
+        <button class="qb" onclick="setMilk(1500,this)">1.5 L</button>
         <button class="qb" onclick="setMilk(2000,this)">2 L</button>
         <button class="qb" onclick="setMilk(3000,this)">3 L</button>
         <button class="qb" onclick="setMilk(5000,this)">5 L</button>
@@ -298,7 +298,7 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
   <!-- Step 2 — 2 min fixed -->
   <div class="step"><div class="snum">2</div><div style="flex:1">
     <div class="stitle">Boil Water + Spices <span class="stag" id="s2tag">2 min</span></div>
-    <div class="sdesc" id="s2D">Bring water to boil. Add spices. HIGH flame 2 minutes — spices bloom fully.</div>
+    <div class="sdesc" id="s2D">First bring water to a full rolling boil on HIGH. Then add crushed spices. Keep boiling 2 more minutes on HIGH — spices need boiling temperature to release oils and aroma fully.</div>
     <button class="stb" id="stb2" onclick="runStep(2,120,'Boiling spices on HIGH...')">▶ 2:00</button>
     <div class="std" id="std2"><div class="stdig" id="std2dig">02:00</div><div class="stprog"><div class="stbar" id="std2bar"></div></div><div class="stmsg" id="std2msg">Boiling spices on HIGH...</div></div>
   </div></div>
@@ -344,8 +344,8 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
   <!-- Step 7 -->
   <div class="step"><div class="snum">7</div><div style="flex:1">
     <div class="stitle" id="s7T">Strain &amp; Serve</div>
-    <div class="sdesc" id="s7D">Strain through fine mesh. Fill 100ml glass to 80ml. Serve piping hot immediately.</div>
-    <div class="shi" id="yNote">Yield: ~80ml per glass · Total: ~80ml</div>
+    <div class="sdesc" id="s7D">Strain through fine mesh. Fill 100ml glass to 70ml mark. Serve piping hot immediately.</div>
+    <div class="shi" id="yNote">Yield: ~70ml per glass · Total: ~70ml</div>
     <button class="done-btn" id="db7" onclick="markDone(7)">✓ Served!</button>
   </div></div>
 
@@ -365,7 +365,7 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
 
   <div class="sec" id="lTips">Tips</div>
   <div class="tips">
-    <div class="tip"><span class="tip-dot">●</span><span id="t1">Yield: 160ml milk → ~80ml chai served. 100ml glass filled at 80ml is authentic.</span></div>
+    <div class="tip"><span class="tip-dot">●</span><span id="t1">Yield: 1L milk + 200ml water → 700ml chai → 10 glasses × 70ml. 100ml glass filled at 70ml.</span></div>
     <div class="tip"><span class="tip-dot">●</span><span id="t2">Use narrowest pot — wide pan loses steam and over-reduces fast.</span></div>
     <div class="tip"><span class="tip-dot">●</span><span id="t3">Spoon test — chai should coat the back. Watery = 2–3 more min.</span></div>
     <div class="tip"><span class="tip-dot">●</span><span id="t4">Full 1 min on HIGH for tea leaves — colour, aroma and taste all come from here.</span></div>
@@ -379,7 +379,7 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
   <div style="text-align:center;padding:6px 0 12px">
     <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--grey)">Calculating for</div>
     <div style="font-family:'Playfair Display',serif;font-size:40px;color:var(--gold2)" id="cCups">1</div>
-    <div style="font-size:12px;color:rgba(251,246,236,0.45)">glass × 80ml</div>
+    <div style="font-size:12px;color:rgba(251,246,236,0.45)">glass × 70ml served</div>
     <div class="qrow" style="justify-content:center;margin-top:10px">
       <button class="qb active" onclick="setC(1,this)">1</button>
       <button class="qb" onclick="setC(5,this)">5</button>
@@ -400,12 +400,32 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
   </div>
   <div class="sec">Selling Price Options</div>
   <div class="pgrid" id="pgrid"></div>
-  <div class="sec" style="margin-top:18px">Daily Profit (200 glasses/day)</div>
+  <div class="sec" style="margin-top:18px">📊 Sales & Profit Projection</div>
   <div class="ccard">
-    <div class="crow"><span class="ck">₹30 × 200</span><span class="cv" style="color:#7dcc8a" id="d30">—</span></div>
-    <div class="crow"><span class="ck">₹35 × 200</span><span class="cv" style="color:#7dcc8a" id="d35">—</span></div>
-    <div class="crow"><span class="ck">₹40 × 200</span><span class="cv" style="color:#7dcc8a" id="d40">—</span></div>
-    <div class="crow"><span class="ck">Monthly (₹35×200×30)</span><span class="cv" style="color:#7dcc8a" id="dMon">—</span></div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="flex:1">
+        <div style="font-size:10px;color:rgba(251,246,236,0.45);margin-bottom:4px">Glasses per day</div>
+        <input type="number" id="spGlasses" value="200" min="1" max="9999"
+          style="width:100%;padding:8px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--cream);font-size:16px;font-family:'DM Sans',sans-serif;text-align:center"
+          oninput="calcSalesProfit()">
+      </div>
+      <div style="flex:1">
+        <div style="font-size:10px;color:rgba(251,246,236,0.45);margin-bottom:4px">Selling price (₹)</div>
+        <input type="number" id="spPrice" value="30" min="1" max="999"
+          style="width:100%;padding:8px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--cream);font-size:16px;font-family:'DM Sans',sans-serif;text-align:center"
+          oninput="calcSalesProfit()">
+      </div>
+    </div>
+    <div class="crow"><span class="ck">Cost per glass</span><span class="cv" id="spPerG" style="color:var(--gold2)">—</span></div>
+    <div class="crow"><span class="ck">📅 Daily revenue</span><span class="cv" id="spDailyRev" style="color:#fff">—</span></div>
+    <div class="crow"><span class="ck">📅 Daily ingredient cost</span><span class="cv" id="spDailyCost" style="color:rgba(251,246,236,0.5)">—</span></div>
+    <div class="crow tot"><span class="ck">📅 Daily profit</span><span class="cv big" id="spDailyProfit">—</span></div>
+    <div style="height:1px;background:var(--border);margin:10px 0"></div>
+    <div class="crow"><span class="ck">📆 Monthly revenue</span><span class="cv" id="spMonRev" style="color:#fff">—</span></div>
+    <div class="crow"><span class="ck">📆 Monthly profit</span><span class="cv" id="spMonProfit" style="color:#7dcc8a">—</span></div>
+    <div style="height:1px;background:var(--border);margin:10px 0"></div>
+    <div class="crow"><span class="ck">📈 Annual revenue</span><span class="cv" id="spAnnRev" style="color:#fff">—</span></div>
+    <div class="crow"><span class="ck">📈 Annual profit</span><span class="cv" id="spAnnProfit" style="color:#7dcc8a">—</span></div>
   </div>
 </div>
 
@@ -476,17 +496,22 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
 </div>
 
 <script>
-var cups=1, commercial=false, isH=false, cupMode='glass', milkMl=500;
+var cups=1, commercial=false, isH=false, cupMode='glass', milkMl=1000;
 var URL_='https://harshsharmahks.github.io/Pinakserviceteatool/';
-var PC={milk:160,water:40,teaG:2,elaichi:2,ginG:6,sugG:10};
+// YIELD: 1000ml milk + 200ml water → 700ml chai → 10 glasses × 70ml served
+// Per glass: 100ml milk, 20ml water, 0.3g tea, 0.2 elaichi pods, 0.6g ginger, 1.2g sugar
+var PC={milk:100,water:20,teaG:0.3,elaichi:0.2,ginG:0.6,sugG:1.2};
 var RATES={milk:0.067,tea:0.522,el:2.5,gin:0.1,sug:0.06};
+var SERVE_ML=70;
 
+// Milk mode: round to nearest 100ml for clean numbers
 function milkToGlass(m){return Math.max(1,Math.round(m/PC.milk));}
 function glassToMilk(g){return g*PC.milk;}
+function roundMilk(m){return Math.max(100,Math.round(m/100)*100);}
 function fmtL(ml_){
-  if(ml_%1000===0)return (ml_/1000)+' L';
-  if(ml_%500===0)return (ml_/1000).toFixed(1)+' L';
-  if(ml_>=1000)return (ml_/1000).toFixed(2)+' L';
+  if(ml_>=1000&&ml_%1000===0)return (ml_/1000)+' L';
+  if(ml_>=1000&&ml_%500===0)return (ml_/1000).toFixed(1)+' L';
+  if(ml_>=1000)return (ml_/1000).toFixed(1)+' L';
   return ml_+' ml';
 }
 function getRT(c){
@@ -517,7 +542,7 @@ function setMode(mode){
   document.getElementById('modeMilk').classList.toggle('active',mode==='milk');
   document.getElementById('glassSection').style.display=mode==='glass'?'block':'none';
   document.getElementById('milkSection').style.display=mode==='milk'?'block':'none';
-  if(mode==='milk'){milkMl=Math.max(500,Math.round(glassToMilk(cups)/500)*500);cups=milkToGlass(milkMl);updMilkDisp();}
+  if(mode==='milk'){milkMl=roundMilk(glassToMilk(cups));cups=milkToGlass(milkMl);updMilkDisp();}
   resetAll();upd();
 }
 function updMilkDisp(){
@@ -545,7 +570,7 @@ function showGlassSug(val){
   [v,Math.round(v/5)*5,Math.round(v/10)*10,Math.round(v/25)*25,Math.round(v/50)*50].forEach(function(n){if(n>=1&&n<=999&&sugs.indexOf(n)===-1)sugs.push(n);});
   sugs.sort(function(a,b){return a-b;});
   box.innerHTML=sugs.slice(0,4).map(function(n){
-    return '<div class="sug-item" onmousedown="pickGlass('+n+')"><span>'+n+' glasses</span><span class="sug-right">'+fmtL(glassToMilk(n))+' milk · ~'+fmtL(n*80)+' chai</span></div>';
+    return '<div class="sug-item" onmousedown="pickGlass('+n+')"><span>'+n+' glasses</span><span class="sug-right">'+fmtL(glassToMilk(n))+' milk · ~'+(n*SERVE_ML)+'ml chai</span></div>';
   }).join('');
   box.classList.add('vis');
 }
@@ -554,24 +579,22 @@ function pickGlass(n){cups=n;resetAll();updQS();upd();document.getElementById('g
 function applyGlass(){var v=parseInt(document.getElementById('glassInp').value);if(!isNaN(v)&&v>=1)pickGlass(Math.min(v,999));}
 
 // ── MILK MODE ──
-function chgMilk(d){milkMl=Math.max(500,milkMl+d);cups=milkToGlass(milkMl);updMilkDisp();resetAll();document.querySelectorAll('#milkSection .qb').forEach(function(b){b.classList.remove('active');});upd();}
-function setMilk(ml_,btn){milkMl=ml_;cups=milkToGlass(ml_);updMilkDisp();resetAll();document.querySelectorAll('#milkSection .qb').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');upd();}
+function chgMilk(d){milkMl=roundMilk(Math.max(100,milkMl+d));cups=milkToGlass(milkMl);updMilkDisp();resetAll();document.querySelectorAll('#milkSection .qb').forEach(function(b){b.classList.remove('active');});upd();}
+function setMilk(ml_,btn){milkMl=roundMilk(ml_);cups=milkToGlass(milkMl);updMilkDisp();resetAll();document.querySelectorAll('#milkSection .qb').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');upd();}
 function showMilkSug(val){
   var box=document.getElementById('milkSug');
   var v=parseFloat(val);
   if(!val||isNaN(v)||v<=0){box.classList.remove('vis');return;}
-  var base=Math.round(v*2)/2;
+  var baseml=roundMilk(Math.round(v*1000));
   var opts=[];
-  [-1,-0.5,0,0.5,1,1.5,2].forEach(function(d){var n=+(base+d).toFixed(1);if(n>=0.5&&n<=50&&opts.indexOf(n)===-1)opts.push(n);});
+  [-200,-100,0,100,200,300,500].forEach(function(d){
+    var n=baseml+d;
+    if(n>=100&&n<=50000&&opts.indexOf(n)===-1)opts.push(n);
+  });
   opts.sort(function(a,b){return a-b;});
-  // Label helper
-  function lbl(n){
-    var map={0.5:'½ L',1:'1 L',1.5:'1½ L',2:'2 L',2.5:'2½ L',3:'3 L',3.5:'3½ L',4:'4 L',4.5:'4½ L',5:'5 L'};
-    return map[n]||(n+' L');
-  }
-  box.innerHTML=opts.slice(0,5).map(function(n){
-    var ml_=Math.round(n*1000),g=milkToGlass(ml_);
-    return '<div class="sug-item" onmousedown="pickMilk('+ml_+')"><span>'+lbl(n)+'</span><span class="sug-right">≈ '+g+' glass'+(g!==1?'es':'')+' · ~'+fmtL(g*80)+' chai</span></div>';
+  box.innerHTML=opts.slice(0,5).map(function(ml_){
+    var g=milkToGlass(ml_);
+    return '<div class="sug-item" onmousedown="pickMilk('+ml_+')"><span>'+fmtL(ml_)+'</span><span class="sug-right">'+g+' glass'+(g!==1?'es':'')+' · ~'+(g*SERVE_ML)+'ml chai</span></div>';
   }).join('');
   box.classList.add('vis');
 }
@@ -580,8 +603,8 @@ function pickMilk(ml_){setMilk(ml_,null);document.getElementById('milkInp').valu
 function applyMilk(){
   var v=parseFloat(document.getElementById('milkInp').value);
   if(isNaN(v)||v<=0)return;
-  var rounded=Math.max(0.5,Math.round(v*2)/2);
-  pickMilk(Math.round(rounded*1000));
+  var ml_=roundMilk(Math.round(v*1000));
+  pickMilk(ml_);
 }
 
 function s(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
@@ -597,15 +620,20 @@ function upd(){
   var milk=PC.milk*c,water=PC.water*c,teaG=PC.teaG*c;
   var elP=PC.elaichi*c,ginG=PC.ginG*c,sugG=PC.sugG*c;
   s('vMilk',ml(milk));s('vWater',ml(water));s('vTea',fmtTea(teaG));
-  s('vEl',elP+' pods');s('vGin',fmtGin(ginG));s('vSug',fmtSug(sugG));
-  s('yBanner',ml(milk)+' milk → ≈ '+c+' glass'+(c>1?'es':'')+' × 80ml = ~'+ml(c*80)+' chai');
+  // Elaichi: small qty show as fraction or whole, large show as count
+  var elShow=elP<1?'¼ pod (shared)':Math.ceil(elP)+' pod'+(Math.ceil(elP)>1?'s':'');
+  s('vEl',elShow);
+  s('vGin',fmtGin(ginG));s('vSug',fmtSug(sugG));
+  s('yBanner','1L milk+200ml water → 700ml chai → 10 glasses × 70ml');
   var rt=getRT(c);
   var stag=document.getElementById('sTag');if(stag)stag.textContent=rt.txt;
   s('sNote','For '+c+' glass'+(c>1?'es':'')+' → '+rt.txt+(commercial?' (commercial burner)':' on medium heat'));
-  s('yNote','Yield: ~'+ml(c*80)+' total · '+c+' × 80ml glass'+(c>1?'es':''));
+  s('yNote',c+' glass'+(c>1?'es':'')+' × 70ml = '+ml(c*SERVE_ML)+' · needs '+ml(milk)+' milk');
   var b5=document.getElementById('stb5');if(b5&&!ST[5].running)b5.textContent='▶ Start Reduction Timer — '+rt.txt;
   var d5=document.getElementById('std5dig');if(d5&&!ST[5].running)d5.textContent=String(rt.hi).padStart(2,'0')+':00';
-  var cM=milk*RATES.milk,cT=teaG*RATES.tea,cE=elP*0.6*RATES.el;
+
+  // Cost — elaichi cost based on actual pod weight ~1.2g per pod
+  var cM=milk*RATES.milk,cT=teaG*RATES.tea,cE=elP*1.2*RATES.el;
   var cG=ginG*RATES.gin,cS=sugG*RATES.sug,tot=cM+cT+cE+cG+cS,pc=tot/c;
   ['cMilk','cMilk2'].forEach(function(id){s(id,'₹'+cM.toFixed(2));});
   ['cTea','cTea2'].forEach(function(id){s(id,'₹'+cT.toFixed(2));});
@@ -615,18 +643,49 @@ function upd(){
   ['cTot','cTot2'].forEach(function(id){s(id,'₹'+tot.toFixed(2));});
   ['cPerG','cPerG2'].forEach(function(id){s(id,'₹'+pc.toFixed(2)+' per glass');});
   s('cCups',c);s('milkQR',ml(milk));s('milkQC',ml(milk));
-  var prices=[25,30,35,40,45,50,60,70];
+
+  var prices=[20,25,30,35,40,50];
   var bIdx=prices.findIndex(function(p){return(p-pc)/p*100>=50;});
-  var pillH=prices.slice(0,6).map(function(p,i){var pr=p-pc,mg=((pr/p)*100).toFixed(0),best=i===bIdx;return '<div class="pp'+(best?' best':'')+'"><div class="pp-p">₹'+p+'</div><div class="pp-m">'+mg+'% margin</div><div class="pp-e">+₹'+pr.toFixed(1)+'/glass</div></div>';}).join('');
+  var pillH=prices.map(function(p,i){var pr=p-pc,mg=((pr/p)*100).toFixed(0),best=i===bIdx;return '<div class="pp'+(best?' best':'')+'"><div class="pp-p">₹'+p+'</div><div class="pp-m">'+mg+'% margin</div><div class="pp-e">+₹'+pr.toFixed(1)+'/glass</div></div>';}).join('');
   var pg=document.getElementById('pgrid');if(pg)pg.innerHTML=pillH;
   var pgR=document.getElementById('pgridR');if(pgR)pgR.innerHTML=pillH;
-  var pc200=(PC.milk*200*RATES.milk+PC.teaG*200*RATES.tea+PC.elaichi*200*0.6*RATES.el+PC.ginG*200*RATES.gin+PC.sugG*200*RATES.sug)/200;
-  s('d30','₹'+((30-pc200)*200).toFixed(0)+'/day');
-  s('d35','₹'+((35-pc200)*200).toFixed(0)+'/day');
-  s('d40','₹'+((40-pc200)*200).toFixed(0)+'/day');
-  s('dMon','₹'+(((35-pc200)*200*30)/1000).toFixed(1)+'k/month');
+
+  // Sales & Profit projection — uses inputs from cost tab
+  calcSalesProfit(pc);
 }
 function toggleComm(){commercial=document.getElementById('commToggle').checked;document.getElementById('comNote').classList.toggle('vis',commercial);resetAll();upd();}
+
+function calcSalesProfit(perGlassCost){
+  var pc=perGlassCost;
+  // If not passed, recalculate from current cups
+  if(pc===undefined){
+    var c=cups,milk=PC.milk*c,teaG=PC.teaG*c,elP=PC.elaichi*c,ginG=PC.ginG*c,sugG=PC.sugG*c;
+    var cM=milk*RATES.milk,cT=teaG*RATES.tea,cE=elP*1.2*RATES.el,cG=ginG*RATES.gin,cS=sugG*RATES.sug;
+    pc=(cM+cT+cE+cG+cS)/c;
+  }
+  var dailyG=parseInt(document.getElementById('spGlasses').value)||200;
+  var sellP=parseInt(document.getElementById('spPrice').value)||30;
+  var dailyRev=dailyG*sellP;
+  var dailyCost=dailyG*pc;
+  var dailyProfit=dailyRev-dailyCost;
+  var margin=((dailyProfit/dailyRev)*100).toFixed(1);
+  var monRev=dailyRev*30;
+  var monProfit=dailyProfit*30;
+  var annRev=dailyRev*365;
+  var annProfit=dailyProfit*365;
+  function fmt(n){if(n>=100000)return '₹'+(n/100000).toFixed(1)+'L';if(n>=1000)return '₹'+(n/1000).toFixed(1)+'k';return '₹'+Math.round(n);}
+  s('spPerG','₹'+pc.toFixed(2));
+  s('spDailyRev',fmt(dailyRev));
+  s('spDailyCost',fmt(dailyCost));
+  s('spDailyProfit',fmt(dailyProfit)+' ('+margin+'%)');
+  s('spMonRev',fmt(monRev));
+  s('spMonProfit',fmt(monProfit));
+  s('spAnnRev',fmt(annRev));
+  s('spAnnProfit',fmt(annProfit));
+  // Colour profit green/red
+  var el=document.getElementById('spDailyProfit');
+  if(el)el.style.color=dailyProfit>0?'#7dcc8a':'#e06060';
+}
 
 // STEP TIMERS
 var ST={2:{},3:{},4:{},5:{},6:{}};
@@ -845,6 +904,7 @@ function showToast(msg){
 }
 
 upd();
+setTimeout(function(){calcSalesProfit();},150);
 </script>
 </body>
 </html>
