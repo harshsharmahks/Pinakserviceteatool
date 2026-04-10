@@ -210,11 +210,11 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
 
     <!-- GLASS MODE -->
     <div id="glassSection">
-      <span class="clbl" style="margin-top:10px">How many glasses? (70ml served per glass)</span>
+      <span class="clbl" style="margin-top:10px">How many glasses? (min 2 · 70ml per glass)</span>
       <div class="cup-row">
         <button class="cup-btn" onclick="chg(-1)">−</button>
         <div class="cup-disp">
-          <div class="cup-num" id="cupN">1</div>
+          <div class="cup-num" id="cupN">2</div>
           <div class="cup-sub">glasses</div>
         </div>
         <button class="cup-btn" onclick="chg(1)">+</button>
@@ -230,7 +230,7 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
       <div class="sug-box" id="glassSug"></div>
       <div class="qrow">
         <button class="qb active" onclick="setC(1,this)">1</button>
-        <button class="qb" onclick="setC(2,this)">2</button>
+        <button class="qb active" onclick="setC(2,this)">2</button>
         <button class="qb" onclick="setC(5,this)">5</button>
         <button class="qb" onclick="setC(10,this)">10</button>
         <button class="qb" onclick="setC(25,this)">25</button>
@@ -272,7 +272,7 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
       </div>
     </div>
 
-    <div class="ynote" id="yBanner">160ml milk → ~1 glass (80ml served)</div>
+    <div class="ynote" id="yBanner">☕ Chai is always shared — minimum 2 glasses!</div>
   </div>
 
   <!-- Stove Type Selector -->
@@ -456,7 +456,7 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
     <div style="font-family:'Playfair Display',serif;font-size:40px;color:var(--gold2)" id="cCups">1</div>
     <div style="font-size:12px;color:rgba(251,246,236,0.45)">glass × 70ml served</div>
     <div class="qrow" style="justify-content:center;margin-top:10px">
-      <button class="qb active" onclick="setC(1,this)">1</button>
+      <button class="qb active" onclick="setC(2,this)">2</button>
       <button class="qb" onclick="setC(5,this)">5</button>
       <button class="qb" onclick="setC(10,this)">10</button>
       <button class="qb" onclick="setC(50,this)">50</button>
@@ -571,31 +571,132 @@ input:checked+.tog-sl:before{transform:translateX(20px)}
 </div>
 
 <script>
-var cups=1, stove=0, commercial=false, isH=false, cupMode='glass', milkMl=1000;
+var cups=2, stove=0, commercial=false, isH=false, cupMode='glass', milkMl=1000;
 var inductionWatts=1800; // default 1800W
 var URL_='https://harshsharmahks.github.io/Pinakserviceteatool/';
 var PC={milk:100,water:20,teaG:0.3,elaichi:0.2,ginG:0.6,sugG:1.2};
 var RATES={milk:0.067,tea:0.522,el:2.5,gin:0.1,sug:0.06};
 var SERVE_ML=70;
 
-// Stove multipliers [waterBoil, milkBoil, ginger, reduction]
-var STOVE=[
-  {note:'🔥 Home gas — standard times',         m:[1.00,1.00,1.00,1.00]},
-  {note:'🔥🔥 Commercial gas — 28% faster',     m:[0.75,0.72,0.72,0.70]},
-  {note:'🔌 Home induction — 20% slower',       m:[1.25,1.20,1.20,1.25]},
-  {note:'🏭 Commercial induction — 10% faster', m:[1.00,0.88,0.88,0.90]}
-];
-// Base times in seconds for 10 glasses (1L milk)
-// Scale by sqrt(cups/10), then multiply by stove factor
-function getStepTime(key,c){
-  var sc=Math.sqrt(Math.max(1,c)/10);
-  var m=STOVE[stove].m;
-  var base={'2':120,'3':330,'4':90,'6r':780};
-  var mIdx={'2':0,'3':1,'4':2,'6r':3};
-  return Math.max(30,Math.round(base[key]*sc*m[mIdx[key]]));
+// ── TIMING ENGINE ──
+// All times based on MILK LITRES, not glass count
+// Yield: 1L milk + 200ml water → 700ml chai → 10 glasses × 70ml
+// Per glass: milk=100ml, water=20ml
+
+function getMilkLitres(){
+  return (cups * PC.milk) / 1000; // convert ml to litres
 }
-function fmtTime(s){var m=Math.floor(s/60),sec=s%60;return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');}
-function fmtTimeLabel(s){var m=Math.floor(s/60),sec=s%60;return sec===0?m+' min':m+'m '+sec+'s';}
+
+// STEP 2 — Boil water only
+// Water = milkL × 0.2  (200ml per 1L milk)
+// Base: 200ml = 2 min on home gas
+// Formula: round(2 × √(waterL / 0.2))  — capped at 8 min
+function getStep2Time(){
+  var waterL = getMilkLitres() * 0.2;
+  var base = 2 * Math.sqrt(waterL / 0.2);
+  var mins = Math.max(1, Math.round(base));
+  if(stove===1) mins = Math.max(1, Math.round(mins * 0.60)); // comm gas: 40% faster
+  if(stove===2){                                              // home induction
+    var wf = 1800 / inductionWatts;
+    mins = Math.max(1, Math.round(mins * wf));
+  }
+  if(stove===3){                                             // comm induction
+    var wf2 = 1800 / inductionWatts;
+    mins = Math.max(1, Math.round(mins * 0.85 * wf2));
+  }
+  return Math.min(8, mins) * 60; // return seconds
+}
+
+// STEP 3 — Milk + elaichi to rolling boil
+// Base: 1L = 4 min on home gas
+// Formula: round(4 × √(milkL))
+function getStep3Time(){
+  var milkL = getMilkLitres();
+  var base = 4 * Math.sqrt(milkL);
+  var mins = Math.max(2, Math.round(base));
+  if(stove===1) mins = Math.max(2, Math.round(mins * 0.70)); // comm gas faster
+  if(stove===2){                                              // home induction — same as gas for boiling
+    var wf = 1800 / inductionWatts;
+    mins = Math.max(1, Math.round(mins * wf));
+  }
+  if(stove===3){                                             // comm induction
+    var wf2 = 1800 / inductionWatts;
+    mins = Math.max(1, Math.round(mins * 0.85 * wf2));
+  }
+  return Math.min(20, mins) * 60;
+}
+
+// STEP 4 — Ginger: ALWAYS 1 min fixed regardless of quantity or stove
+function getStep4Time(){ return 60; }
+
+// STEP 5 — CTC tea: ALWAYS 1 min fixed
+function getStep5Time(){ return 60; }
+
+// STEP 6r — Reduction
+// Base: 1L = 12 min on home gas
+// Formula: round(12 × √(milkL))
+// Induction adds 25% because bottom-only heat = slower evaporation
+// Wattage affects only reduction, not boiling
+function getStep6rTime(){
+  var milkL = getMilkLitres();
+  var base = 12 * Math.sqrt(milkL);
+  var mins = Math.max(3, Math.round(base));
+  if(stove===1) mins = Math.max(2, Math.round(mins * 0.72)); // comm gas: faster
+  if(stove===2){                                             // home induction
+    // Base slow factor 1.25, then adjust for actual wattage vs 1800W reference
+    var wf = 1800 / inductionWatts;
+    mins = Math.max(3, Math.round(mins * 1.25 * wf));
+  }
+  if(stove===3){                                            // comm induction
+    var wf2 = 2000 / inductionWatts;
+    mins = Math.max(3, Math.round(mins * 1.05 * wf2));
+  }
+  return Math.min(90, mins) * 60;
+}
+
+// STEP 7 — Sugar: ALWAYS 1 min fixed
+function getStep7Time(){ return 60; }
+
+// Get time for any step key — returns seconds
+function getStepTime(key, c){
+  // Temporarily set cups to c if different (for preview)
+  var savedCups = cups;
+  cups = c;
+  var t;
+  if(key==='2') t=getStep2Time();
+  else if(key==='3') t=getStep3Time();
+  else if(key==='4') t=getStep4Time();
+  else if(key==='6r') t=getStep6rTime();
+  else t=60;
+  cups = savedCups;
+  return t;
+}
+
+function getRT(c){
+  var sec = getStepTime('6r', c);
+  var mins = Math.round(sec/60);
+  var lo = Math.max(1, mins-1);
+  var hi = mins+1;
+  return{lo:lo, hi:hi, sec:sec, txt:lo+'–'+hi+' min'};
+}
+
+function fmtTime(s){
+  var m=Math.floor(s/60),sec=s%60;
+  return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+}
+function fmtTimeLabel(s){
+  var m=Math.floor(s/60),sec=s%60;
+  return sec===0?m+' min':m+'m '+sec+'s';
+}
+
+// Stove notes only — timing now handled by dedicated functions above
+var STOVE=[
+  {note:'🔥 Home gas — standard times'},
+  {note:'🔥🔥 Commercial gas — 25% faster'},
+  {note:'🔌 Home induction — reduction 25% slower'},
+  {note:'🏭 Commercial induction — optimised times'}
+];
+// getTimingTable removed — not needed at runtime
 function setStove(i){
   stove=i;
   document.querySelectorAll('.stove-btn').forEach(function(b,idx){b.classList.toggle('active',idx===i);});
@@ -629,33 +730,19 @@ var WATT_LEVELS=[
 function setWattage(w){
   inductionWatts=parseInt(w);
   document.getElementById('wattSlider').value=inductionWatts;
-  // Update STOVE multiplier for active induction mode
-  // Base reference: 1800W home gas = 1.0
-  // Formula: multiplier = 1800/watts × stove base
-  var baseM=stove===3?0.88:1.20; // commercial ind vs home ind base
-  var wattFactor=1800/inductionWatts;
-  STOVE[stove].m=[
-    +(baseM*wattFactor).toFixed(3),
-    +(baseM*wattFactor).toFixed(3),
-    +(baseM*wattFactor).toFixed(3),
-    +((stove===3?0.90:1.25)*wattFactor).toFixed(3)
-  ];
-  // Find nearest level
   var nearest=WATT_LEVELS.reduce(function(a,b){return Math.abs(b.w-inductionWatts)<Math.abs(a.w-inductionWatts)?b:a;});
   s('indWattVal',inductionWatts+'W');
   s('indWattSub',inductionWatts+'W — '+nearest.lbl+' ('+nearest.desc+')');
-  s('indNote','All step times calculated for '+inductionWatts+'W');
-  // Highlight active level button
+  s('indNote','Reduction time calculated for '+inductionWatts+'W');
   document.querySelectorAll('.lv').forEach(function(el,i){
     el.classList.toggle('active-lv',WATT_LEVELS[i]&&Math.abs(WATT_LEVELS[i].w-inductionWatts)<150);
   });
-  // Update induction badges dynamically
   var recLvls=getRecommendedLevels(inductionWatts);
   if(document.getElementById('ind2'))document.getElementById('ind2').innerHTML='🔌 Set to <strong>'+recLvls.high+' — full power for water boil</strong>';
   if(document.getElementById('ind3'))document.getElementById('ind3').innerHTML='🔌 Set to <strong>'+recLvls.high+' — watch for milk overflow</strong>';
-  if(document.getElementById('ind4'))document.getElementById('ind4').innerHTML='🔌 Set to <strong>'+recLvls.high+' — maintain full boil</strong>';
+  if(document.getElementById('ind4'))document.getElementById('ind4').innerHTML='🔌 Keep at <strong>'+recLvls.high+' — maintain full boil</strong>';
   if(document.getElementById('ind5'))document.getElementById('ind5').innerHTML='🔌 Set to <strong>'+recLvls.max+' — max power for CTC</strong>';
-  if(document.getElementById('ind6'))document.getElementById('ind6').innerHTML='🔌 Set to <strong>'+recLvls.med+' — gentle simmer for reduction</strong>';
+  if(document.getElementById('ind6'))document.getElementById('ind6').innerHTML='🔌 Lower to <strong>'+recLvls.med+' — gentle steady simmer</strong>';
   if(document.getElementById('ind7'))document.getElementById('ind7').innerHTML='🔌 Set to <strong>'+recLvls.medhigh+' — final boil</strong>';
   resetAll();upd();
 }
@@ -678,7 +765,7 @@ function getRecommendedLevels(maxW){
 // Milk mode: round to nearest 100ml for clean numbers
 function milkToGlass(m){return Math.max(1,Math.round(m/PC.milk));}
 function glassToMilk(g){return g*PC.milk;}
-function roundMilk(m){return Math.max(100,Math.round(m/100)*100);}
+function roundMilk(m){return Math.max(200,Math.round(m/100)*100);}
 function fmtL(ml_){
   if(ml_>=1000&&ml_%1000===0)return (ml_/1000)+' L';
   if(ml_>=1000&&ml_%500===0)return (ml_/1000).toFixed(1)+' L';
@@ -720,14 +807,14 @@ function updMilkDisp(){
 }
 
 // ── GLASS MODE ──
-function chg(d){var n=cups+d;if(n<1||n>999)return;cups=n;resetAll();updQS();upd();}
+function chg(d){var n=cups+d;if(n<2||n>999)return;cups=n;resetAll();updQS();upd();}
 function setC(n,btn){
   cups=n;resetAll();
   document.querySelectorAll('#glassSection .qb').forEach(function(b){b.classList.remove('active');});
   if(btn)btn.classList.add('active');upd();
 }
 function updQS(){
-  var vals=[1,2,5,10,25,50,100,200];
+  var vals=[2,5,10,25,50,100,200];
   document.querySelectorAll('#glassSection .qb').forEach(function(b,i){if(vals[i]!==undefined)b.classList.toggle('active',vals[i]===cups);});
 }
 function showGlassSug(val){
@@ -757,7 +844,7 @@ function showMilkSug(val){
   var opts=[];
   [-200,-100,0,100,200,300,500].forEach(function(d){
     var n=baseml+d;
-    if(n>=100&&n<=50000&&opts.indexOf(n)===-1)opts.push(n);
+    if(n>=200&&n<=50000&&opts.indexOf(n)===-1)opts.push(n);
   });
   opts.sort(function(a,b){return a-b;});
   box.innerHTML=opts.slice(0,5).map(function(ml_){
